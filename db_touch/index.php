@@ -15,17 +15,16 @@
 <div style="padding: 2em; background:tan;">
 
     <div style="border:solid;">
-	<form method='post' action='index.php' enctype='multipart/form-data'>
-	    <textarea id="sql" name="inputSQL" type="textarea" rows="10" cols="50"> Coming soon! </textarea><br>
-	    <input type='submit' value='Execute SQL'>
+        <form method='post' action='index.php' enctype='multipart/form-data'>
+            Name: <input type="text" name="pageName" size="25" value="wow"> 
+            ID: <input type="text" name ="pageID" size="3" value="8"><br>
+	    <textarea id="sql" name="pageContent" type="textarea" rows="10" cols="50"> Coming soon! </textarea><br>
+	    <input type='submit' value='Save Changes'>
 	</form>
     </div>
-    
-<?php
 
-	 
-	require ("db_credentials.php");
-	echo "<br><br><br>". UID . "<br><br>";
+<?php
+    require ("db_credentials.php");
 
     // Clear Error Log.
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
@@ -34,26 +33,22 @@
 
     // $query = "CREATE TABLE test_table (id INT UNSIGNED NOT NULL AUTO_INCREMENT KEY, name TEXT, more TEXT);";
     // query($query);
-    //$query = "INSERT INTO test_table (name, more) VALUES('Elizabeth', 'Fantastic')";
-    //query($query);
-
-    /*
-    echo "<br><br><div style='border:dashed'>";
-    // tableDump("test_table");
-    $pile = query("DESC test_table;");
-    foreach($pile as $hill){
-	echo "----ROW----<br>";
-	foreach($hill as $stone){
-	    echo "$stone <br>";
-	    }
-	}
-	
-    echo "</div>";
-    */
-
-    tableDump("test_table");
     
-	    
+    // Updates table wirh conects from form.
+    if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['pageContent'])){
+	$inName = trim($_POST['pageName']);
+        $inContent = trim($_POST['pageContent']);
+        $inID = trim($_POST['pageID']);
+        query("UPDATE test_table SET "
+            . "name = '$inName', "
+            . "more = '$inContent' "
+            . "WHERE id = $inID;"
+            );
+	}
+    //query($query);
+    tableDump("test_table");
+
+    
     // Send a SQL query to the DB.
     function query($query){
 	// Create & check connection.
@@ -69,23 +64,19 @@
 	    die($conn->error);
 	    }
 	else {
-	    echo "<p>Running '$query'</p><p>...Executed.</p></div>";
+	    echo "<p>Running:</p><pre>" . htmlspecialchars($query) . "</pre><p>...Executed.</p></div>";
 	    return $result;
 	    }
 	}
     
-
     // Pull all the contents of the given table, & display them. 
     function tableDump($aTable){
 	$results = query("SELECT * FROM $aTable;");
 	$cols = ["id","name","more"];
-	
-	// Get column names & numbers.
-	$colNames = query("DESC $aTable");
-	
-	
+
+		
 	// Output.
-	echo "<table><tr> <th>$cols[0]</th> <th>$cols[1]</th><th>$cols[2]</th></tr>";
+	echo "<br><table><tr> <th>$cols[0]</th> <th>$cols[1]</th><th>$cols[2]</th></tr>";
 	for ($j = 0 ; $j < $results->num_rows; ++$j){
 	      $results->data_seek($j);
 	      $row = $results->fetch_array(MYSQLI_NUM);
@@ -95,9 +86,7 @@
 		echo "<td>" . htmlspecialchars($row[$k]) . "</td>";
 	      echo "</tr>";
 	    }
-
 	echo "</table>";
-
 	}
 	
 function BACKUPtableDump($aTable){
@@ -125,16 +114,8 @@ function BACKUPtableDump($aTable){
 	echo "<br><b>ERROR LOG</b><br><div style='border:solid'><pre>" . $input . "</pre></div>";
 	}
 
-	//Execute SQL in box.
-    if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['inputSQL'])){
-	query($_POST[inputSQL]);
-	}
-
-
-
 
     displayErrors();    
-
     echo"<br><br><br><br><br><br><br><br><br><br><br><br><br>"
     //$conn->close(); 
 ?> 
