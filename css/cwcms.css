@@ -1,0 +1,67 @@
+/*	Core CSS styling # 0.1 for CWCMS. 
+ *      www.cwholemaniii.com
+ *      codeMonkey@cwholemaniii.com
+ *
+ * 	Created:        2 March 2019. 	
+ * 	Modified:       2 March 2019.
+ *      Based on:       cwholemaniii.com Default 5.0.
+ *
+ *      Fonts from Google: https://www.google.com/fonts#
+ */
+body {
+  background: radial-gradient(circle at bottom left, #4eb393, #317d9d); }
+
+h1, h2, h3 {
+  margin: 0;
+  padding: 0;
+  margin: auto;
+  color: white; }
+
+h1 {
+  font-size: 1.75em;
+  font-family: "Cinzel Decorative";
+  white-space: nowrap; }
+
+table, th, td {
+  border: 1px solid black; }
+
+th {
+  font-weight: bold; }
+
+.headerIcon {
+  width: 1em;
+  height: 1em; }
+
+hr {
+  color: white; }
+
+details {
+  background: #6a6a6a; }
+
+legend {
+  color: white; }
+
+.confirmAction {
+  background: #6a6a6a; }
+
+.confirmAction:hover {
+  background: red;
+  border: 1px;
+  padding: 0.25em; }
+
+.headerIcon {
+  width: 1em;
+  height: 1em; }
+
+.collapsible legend {
+  font-weight: bold;
+  cursor: pointer;
+  padding-left: 20px; }
+
+.collapsible legend, .collapsible.expanded legend {
+  background: transparent url("collapse.png") no-repeat center left; }
+
+.collapsible.collapsed legend {
+  background: transparent url("expand.png") no-repeat center left; }
+
+/*# sourceMappingURL=cwcms.css.map */

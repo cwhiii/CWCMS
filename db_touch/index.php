@@ -1,20 +1,23 @@
 <html>
 <head>
-<title> CWCMS Playground </title>
-<head>
-    <style>
-	table, th, td {
-	    border: 1px solid black;
-	    }
-	th {
-	    font-weight: bold;
-	    }   
-    </style>
+<title> CWCMS DB Testing </title>
+    <script  async type="text/javascript" src="/scripting/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/playground/CWCMS/css/cwcms.css">
+    <link href='https://fonts.googleapis.com/css?family=Cinzel:400,700,900' rel='stylesheet' type='text/css'> 
+    <link href='https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,700,900' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Domine:400,700' rel='stylesheet' type='text/css'>
+    <LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
+    <meta charset="utf-8"> 
+</head>
 <body>
-
-<div style="padding: 2em; background:tan;">
-
-    <div style="border:solid;">
+<div class="header"> <!-- USE??? <header> ??? -->
+    <h1>
+        <img src="/images/parts/kmv_logo_small.png" class="headerIcon">
+        CWCMS DB Testing
+    </h1>
+</div>
+<div style="padding: 2em; ">
+    <div>
         <form method='post' action='index.php' enctype='multipart/form-data'>
             Name: <input type="text" name="pageName" size="25" value="wow"> 
             ID: <input type="text" name ="pageID" size="3" value="8"><br>
@@ -22,6 +25,7 @@
 	    <input type='submit' value='Save Changes'>
 	</form>
     </div>
+    <hr>
 
 <?php
     require ("db_credentials.php");
@@ -51,6 +55,17 @@
     
     // Send a SQL query to the DB.
     function query($query){
+	// Create & check connection.
+	$conn = new mysqli(SERVER, UID, PASS, DB);
+	if ($conn->connect_error) 
+	    {die("Connection failed: " . $conn->connect_error);}
+	$result = $conn->query($query);
+	if(!$result) {die($conn->error);}
+	else {return $result;}
+	}
+    
+    // Verbose query.
+    function queryv($query){
 	// Create & check connection.
 	echo "<br><b>Running query:</b><div style='border:solid'>";
 	$conn = new mysqli(SERVER, UID, PASS, DB);
