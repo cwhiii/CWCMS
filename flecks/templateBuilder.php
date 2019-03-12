@@ -28,7 +28,12 @@
 	</form>
     </div>
     <hr>
-
+    <div>
+        <form method='post' action='templateBuilder.php' enctype='multipart/form-data'>
+	    <input type='submit' value='Load'>
+	</form>
+    </div>
+    <hr>
 
 <?php
 // templateBuilder.php
