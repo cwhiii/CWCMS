@@ -22,7 +22,7 @@
     <div>
         <form method='post' action='templateBuilder.php' enctype='multipart/form-data'>
 	    <textarea id="sql" name="fleckContent" type="textarea" rows="30" cols="150"> Type Here. </textarea><br>
-            <input type='submit' value='Save Changes'>
+            <input type='submit' value='Save' name="save">
             Name: <input type="text" name="fleckName" size="25" value="wow"> 
             ID: <input type="text" name ="fleckID" size="3" value="1" readonly style="color:grey;"><br>
 	</form>
@@ -30,7 +30,7 @@
     <hr>
     <div>
         <form method='post' action='templateBuilder.php' enctype='multipart/form-data'>
-	    <input type='submit' value='Load'>
+	    <input type='submit' value='Load' name="load">
 	</form>
     </div>
     <hr>
@@ -38,7 +38,7 @@
 <?php
 // templateBuilder.php
 echo "Welcome.<br>";
-//$tmp = fopen("error_log", 'w') or die("Failed to open error log.");
+$tmp = fopen("error_log", 'w') or die("Failed to open error log.");
 
 
 require_once ("dbHandler.php");
@@ -48,21 +48,28 @@ $dbh = new DbHandler;
 //$bar->queryv("SELECT * FROM flecks;");    
 
 
- // Updates table wirh contents from form.
-    if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['fleckContent'])){
-	$inName = trim($_POST['fleckName']);
-        $inContent = trim($_POST['fleckContent']);
-        $inID = trim($_POST['fleckID']);
-        
-        $dbh->query("UPDATE flecks SET "
-            . "f_id = '$inID', "
-            . "name = '$inName', "
-            . "content = '$inContent' "
-            . "WHERE f_id = $inID;"
-            );
-	}
 
 
+
+ // Updates table with contents from form.
+    
+    if($_SERVER['REQUEST_METHOD'] == "POST"){
+        if($_POST['save']){
+            echo "Saving.";
+            $inName = trim($_POST['fleckName']);
+            $inContent = trim($_POST['fleckContent']);
+            $inID = trim($_POST['fleckID']);
+            $dbh->query("UPDATE flecks SET "
+                . "f_id = '$inID', "
+                . "name = '$inName', "
+                . "content = '$inContent' "
+                . "WHERE f_id = $inID;"
+                );
+            }
+        elseif($_POST['load']){
+            echo "Loading.";
+            }
+    }
 
 
 
