@@ -98,9 +98,8 @@
     <fieldset class="collapsible">	
         <legend>Page Info</legend>
         <div>
-            Title <input type="text">
-
-            <br>Group <select id="isGroup" onChange="toggleGroups();">
+            Title <input type="text"><br>
+            Group <select id="isGroup" onChange="toggleGroups();">
                 <option type="radio" name="standalone" value="standalone">Standalone</option>
                 <option type="radio" name="collection" value="collection">Collection</option>
                 <option type="radio" name="series" value="series">Series</option>
@@ -118,15 +117,22 @@
                 <option>3</option>
             </select>
             <br>
-            <details>
+            <details open>
                 <summary></summary>
-
                 Name <input type="text"><br>		
-                Location <input type="text" value="/some/url/is/specified/"><br>
-                Page ID 123456, State <span id="state">[new]</span><br>
+                Template <input type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
+                Location <input type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
+                Page ID 123456, State <span id="state" >[new]</span><br>
             </details> 
         </div>			
     </fieldset>
+    
+    <p>
+        ---THE ICEBOX---<br>
+        ---Hidden WYSIWYG components below.
+    </p>
+    <div style="visibility: hidden;">
+        ---THE ICEBOX---
 
     <fieldset class="collapsible">
         <legend>Basic</legend>
@@ -227,6 +233,7 @@
             <button>Style Sheets</button>
         <div>
     </fieldset>
+    </div>
 </div>
 
 <textarea class="workspace">

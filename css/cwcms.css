@@ -53,6 +53,9 @@ legend {
   width: 1em;
   height: 1em; }
 
+.preAlpha {
+  visibility: hidden; }
+
 .collapsible legend {
   font-weight: bold;
   cursor: pointer;

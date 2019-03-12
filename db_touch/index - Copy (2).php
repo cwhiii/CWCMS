@@ -38,7 +38,7 @@
     // $query = "CREATE TABLE test_table (id INT UNSIGNED NOT NULL AUTO_INCREMENT KEY, name TEXT, more TEXT);";
     // query($query);
     
-    // Updates table wirh contents from form.
+    // Updates table wirh conects from form.
     if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['pageContent'])){
 	$inName = trim($_POST['pageName']);
         $inContent = trim($_POST['pageContent']);
