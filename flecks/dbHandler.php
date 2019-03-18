@@ -1,7 +1,7 @@
 <?php
 // dbHandler.php 
 
-echo "Go for launch.<br>";
+//echo "DB Handler Loaded.<br>";
 require_once ("../db_touch/db_credentials.php");
 
 class DbHandler{

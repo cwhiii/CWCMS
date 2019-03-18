@@ -247,52 +247,46 @@ words
 </textarea>
 
 </body>
-    <script>
-            (function($) {
-                    $.fn.collapsible = function(options) {
-                            this.each(function() {
-                                    var $fieldset = $(this);
-                                    var $legend = $fieldset.children("legend");
-                                    var isCollapsed = $fieldset.hasClass("collapsed");
-                                    var starter = $fieldset.hasClass("starter");
+<script>
+(function($) {
+        $.fn.collapsible = function(options) {
+            this.each(function() {
+            var $fieldset = $(this);
+            var $legend = $fieldset.children("legend");
+            var isCollapsed = $fieldset.hasClass("collapsed");
+            var starter = $fieldset.hasClass("starter");
 
-                                    $legend.click(function() {
-                                            collapse($fieldset, !isCollapsed);
-                                            isCollapsed = !isCollapsed;
-                                            });
+            $legend.click(function() {
+                collapse($fieldset, !isCollapsed);
+                isCollapsed = !isCollapsed;
+                });
+            // Perform initial collapse.
+            collapse($fieldset, isCollapsed);
+            if(starter) {
+                collapse($fieldset, true);
+                }
+            });
+        };
 
-                                    // Perform initial collapse.
-                                    collapse($fieldset, isCollapsed);
-
-
-
-                                    if(starter) {
-                                            collapse($fieldset, true);
-                                            }
-                                    });
-                    };
-
-                    // Collapse/uncollapse the specified fieldset.
-
-                    function collapse($fieldset, doCollapse) {
-                            $container = $fieldset.find("div");
-                            if(doCollapse) {
-                                    $container.hide();
-                                    $fieldset.removeClass("expanded").addClass("collapsed");
-                                    } 
+    // Collapse/uncollapse the specified fieldset.
+    function collapse($fieldset, doCollapse) {
+    $container = $fieldset.find("div");
+    if(doCollapse) {
+        $container.hide();
+        $fieldset.removeClass("expanded").addClass("collapsed");
+        } 
 
 
-                            else {
-                                    $container.show();
-                                    $fieldset.removeClass("collapsed").addClass("expanded");
-                                    }
-                            };
-
-            })(jQuery);
-    </script>
-    <script>
-        $("fieldset.collapsible").collapsible();
-    </script>
+    else {
+        $container.show();
+        $fieldset.removeClass("collapsed").addClass("expanded");
+        }
+    };
+    })(jQuery);
+</script>
+<script>
+    $("fieldset.collapsible").collapsible();
+</script>
 </html>
 
 

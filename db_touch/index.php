@@ -92,10 +92,9 @@
 		
 	// Output.
 	echo "<br><table><tr> <th>$cols[0]</th> <th>$cols[1]</th><th>$cols[2]</th></tr>";
-	for ($j = 0 ; $j < $results->num_rows; ++$j){
+	for ($j = 0; $j < $results->num_rows; ++$j){
 	      $results->data_seek($j);
 	      $row = $results->fetch_array(MYSQLI_NUM);
-
 	      echo "<tr>";
 	      for ($k = 0 ; $k < 3 ; ++$k)		    // MAGIC VAR!!
 		echo "<td>" . htmlspecialchars($row[$k]) . "</td>";

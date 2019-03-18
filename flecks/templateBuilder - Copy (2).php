@@ -6,49 +6,6 @@ require_once ("dbHandler.php");
 //$dbh = new DbHandler;
 $_SESSION['DB'] = new DbHandler; 
 
-$_SESSION['loadID'] = "unSet"; 
-$_SESSION['loadName'] = "unSet"; 
-$_SESSION['loadContent'] = "unSet";
-
-
-
-
-     // Updates table with contents from form.
-    if($_SERVER['REQUEST_METHOD'] == "POST"){
-        if($_POST['save']){
-            // echo "Saving...";
-            $inName = trim($_POST['fleckName']);
-            $inContent = trim($_POST['fleckContent']);
-            $inID = trim($_POST['currentFleckID']);
-            $_SESSION['DB']->query("UPDATE flecks SET "
-                . "f_id = '$inID', "
-                . "name = '$inName', "
-                . "content = '$inContent' "
-                . "WHERE f_id = $inID;"
-                );
-            }
-        elseif($_POST['load']){
-            //echo "Loading...";
-            $thisFleck = trim($_POST['loadFleckID']) ;
-
-            
-            $results = $_SESSION['DB']->query("SELECT f_id FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);            
-            $_SESSION['loadID'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
-            
-            
-            $results = $_SESSION['DB']->query("SELECT name FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);
-            $_SESSION['loadName'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
-           
-            
-            $results = $_SESSION['DB']->query("SELECT content FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);
-            $_SESSION['loadContent'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
-            }
-    }
-
-
 ?>
 
 <html>
@@ -73,14 +30,10 @@ $_SESSION['loadContent'] = "unSet";
 <div style="padding: 2em; ">
     <div>
         <form method='post' action='templateBuilder.php' enctype='multipart/form-data'>
-	    <textarea id="content" name="fleckContent" type="textarea" rows="30" cols="150"> 
-<?php echo $_SESSION['loadContent']; ?> 
-            </textarea><br>
+	    <textarea id="sql" name="fleckContent" type="textarea" rows="30" cols="150"> Type Here. </textarea><br>
             <input type='submit' value='Save' name="save">
-            <?php echo "Name: <input type= 'text' name='fleckName' size='25' value="    . $_SESSION['loadName']     . ">  "; ?>
-            <?php echo "ID: <input type='text' name ='currentFleckID' size='3' value='" . $_SESSION['loadID']  . "' readonly style='color:grey;'><br>"; ?> 
-            
-            
+            Name: <input type="text" name="fleckName" size="25" value="wow"> 
+            ID: <input type="text" name ="currentFleckID" size="3" value="1" readonly style="color:grey;"><br>
 	</form>
     </div>
     <hr>
@@ -126,6 +79,33 @@ function displayFlecks(){
 	echo "</table>";
 	}
 
+         
+        
+     // Updates table with contents from form.
+    if($_SERVER['REQUEST_METHOD'] == "POST"){
+        if($_POST['save']){
+            echo "Saving.";
+            $inName = trim($_POST['fleckName']);
+            $inContent = trim($_POST['fleckContent']);
+            $inID = trim($_POST['currentFleckID']);
+            $_SESSION['DB']->query("UPDATE flecks SET "
+                . "f_id = '$inID', "
+                . "name = '$inName', "
+                . "content = '$inContent' "
+                . "WHERE f_id = $inID;"
+                );
+            }
+        elseif($_POST['load']){
+            echo "<b>Loading...</b><br>";
+            $results = $_SESSION['DB']->query(""
+                    . "SELECT f_id, name, content FROM flecks WHERE f_id = "
+                    . trim($_POST['loadFleckID']) . ";");
+            $results->data_seek(0);
+            echo "ID: "      . htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0][0]) . "<br>";
+            echo "Name: "    . htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0][1]) . "<br>";
+            echo "Content: " . htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0][2]) . "<br>";
+            }
+    }
 
 displayErrors();   
 ?>
