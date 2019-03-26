@@ -10,9 +10,6 @@ $_SESSION['loadID'] = "unSet";
 $_SESSION['loadName'] = "unSet"; 
 $_SESSION['loadContent'] = "unSet";
 
-
-
-
      // Updates table with contents from form.
     if($_SERVER['REQUEST_METHOD'] == "POST"){
         if($_POST['save']){
@@ -30,21 +27,11 @@ $_SESSION['loadContent'] = "unSet";
         elseif($_POST['load']){
             //echo "Loading...";
             $thisFleck = trim($_POST['loadFleckID']) ;
-
-            
-            $results = $_SESSION['DB']->query("SELECT f_id FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);            
-            $_SESSION['loadID'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
-            
-            
-            $results = $_SESSION['DB']->query("SELECT name FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);
-            $_SESSION['loadName'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
-           
-            
-            $results = $_SESSION['DB']->query("SELECT content FROM flecks WHERE f_id = $thisFleck;");
-            $results->data_seek(0);
-            $_SESSION['loadContent'] = htmlspecialchars($results->fetch_array(MYSQLI_NUM)[0]);
+            $results = $_SESSION['DB']->query("SELECT f_id, name, content FROM flecks WHERE f_id = $thisFleck;");
+            $row = $results->fetch_array(MYSQLI_ASSOC);            
+            $_SESSION['loadID'] =  htmlspecialchars($row['f_id']);
+            $_SESSION['loadName'] =  htmlspecialchars($row['name']);
+            $_SESSION['loadContent'] =  htmlspecialchars($row['content']);
             }
     }
 
