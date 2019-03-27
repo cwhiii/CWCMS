@@ -1,6 +1,7 @@
 <?php   
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
-    require_once ("dbHandler.php");
+    $PATH = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
+    require_once ($PATH."utilities/dbHandler.php");
     $_SESSION['DB'] = new DbHandler;
     $_SESSION['loadID'] = "unSet"; 
     $_SESSION['loadName'] = "unSet"; 
@@ -90,7 +91,8 @@
     <link href='https://fonts.googleapis.com/css?family=Domine:400,700' rel='stylesheet' type='text/css'>
     <LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
     <meta charset="utf-8"> 
-     <script>
+    <script>
+        <!-- Prevents undesired loss of data due to unsaved changes. -->
         $changed = false;
         
         function hasChanged(){
@@ -133,13 +135,13 @@
     
 <div style="padding: 2em; ">
     <div>
-        <form method='post' action='templateBuilder.php' enctype='multipart/form-data'>
+        <form method='post' action='flecks_editor.php' enctype='multipart/form-data'>
 	    <textarea id="content" name="fleckContent" type="textarea" rows="30" cols="150" onKeyPress="hasChanged();" > 
 <?php echo $_SESSION['loadContent']; ?> 
             </textarea><br>
             <input type='submit' value='Save' name="save">
-            <?php echo "Name: <input type= 'text' name='fleckName' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName'].">  "; ?>
-            <?php echo "ID: <input type='text' name ='currentFleckID' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
+            Name: <?php echo "<input type= 'text' name='fleckName' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName'].">  "; ?>
+            ID: <?php echo "<input type='text' name='currentFleckID' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'>"; ?><br> 
 	</form>
     </div>
     <hr>
@@ -152,13 +154,13 @@
         </div>
         
         <div style="float:left; margin:1em;">    
-            <form method='post' action='templateBuilder.php' enctype='multipart/form-data' onSubmit="return confirmDiscardLoad(this);">
+            <form method='post' action='flecks_editor.php' enctype='multipart/form-data' onSubmit="return confirmDiscardLoad(this);">
                 <hr>
                 Input Fleck ID: <input type="text" name ="loadFleckID" size="3" value="3">
                 <input type='submit' value='Load' name="load" id="load">
                 <hr>
             </form>
-            <form method='post' action='templateBuilder.php' enctype='multipart/form-data' onSubmit="return confirmDiscardNew(this);">
+            <form method='post' action='flecks_editor.php' enctype='multipart/form-data' onSubmit="return confirmDiscardNew(this);">
                 <input type='submit' value='Create New Fleck' name="new">
             </form>
             

@@ -54,21 +54,13 @@ legend{
     color:white;
     }
     
-// CLASSES------------------------------------------------------
-
-.confirmAction {
-        background:rgba(106,106,106,1);
-        }
-.confirmAction:hover {
-        background:red;
-        border:1px;
-        padding:0.25em; 
-        }
+// CLASSES------------------------------------------------------ 
 
 .headerIcon{
-        width:1em;
-        height:1em;
-        }
+    width:1em;
+    height:1em;
+    text-align:center;
+    }
 
 .preAlpha{
     visibility: hidden; 

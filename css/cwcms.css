@@ -41,17 +41,10 @@ details {
 legend {
   color: white; }
 
-.confirmAction {
-  background: #6a6a6a; }
-
-.confirmAction:hover {
-  background: red;
-  border: 1px;
-  padding: 0.25em; }
-
 .headerIcon {
   width: 1em;
-  height: 1em; }
+  height: 1em;
+  text-align: center; }
 
 .preAlpha {
   visibility: hidden; }
