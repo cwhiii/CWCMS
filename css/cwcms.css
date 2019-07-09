@@ -3,12 +3,19 @@
  *      codeMonkey@cwholemaniii.com
  *
  * 	Created:        2 March 2019. 	
- * 	Modified:       2 March 2019.
+ * 	Modified:       9 July 2019.
  *      Based on:       cwholemaniii.com Default 5.0.
  *
  *      Fonts from Google: https://www.google.com/fonts#
  */
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
 body {
+  padding: 0;
+  margin: 0;
   background: radial-gradient(circle at bottom left, #4eb393, #317d9d); }
 
 h1, h2, h3 {

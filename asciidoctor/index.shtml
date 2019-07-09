@@ -1,0 +1,119 @@
+<html>
+<head>
+    <title> CWCMS AsciiDoctor Tests </title>
+	
+	
+	
+	
+	<head>
+    <title> CWCMS Page Editor </title>
+    <script  async type="text/javascript" src="/scripting/jquery/jquery.min.js"></script>
+    <script src="asciidoctor.js"></script>
+    <link rel="stylesheet" type="text/css" href="/playground/CWCMS/css/cwcms.css">
+    <link href='https://fonts.googleapis.com/css?family=Cinzel:400,700,900' rel='stylesheet' type='text/css'> 
+    <link href='https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,700,900' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Domine:400,700' rel='stylesheet' type='text/css'>
+    <LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
+    <meta charset="utf-8"> 
+
+	
+	
+  <style>
+		*, *:before, *:after {
+		-webkit-box-sizing: border-box; 
+		-moz-box-sizing: border-box; 
+		box-sizing: border-box;
+		}
+
+        body {
+            padding:0;
+            margin:0;
+            background:radial-gradient(circle at bottom left, rgba(78,179,147,1), rgba(49,125,157,1));
+            }
+	</style>			
+	
+	<script>
+		var asciidoctor = Asciidoctor();
+		function cook(){
+			//alert("Spinning up the grill...");
+			var raw = document.getElementById("rawDiv").value;
+			document.getElementById("cookedDiv").innerHTML = asciidoctor.convert(raw, { 'safe': 'unsafe' });
+			}
+
+	</script>
+	
+	
+</head>
+<body>
+	<header>
+		<h1>
+			CWCMS  <br> AsciiDoctor Tests
+		</h1>
+	</header>
+
+	<textarea id="rawDiv" style="background:ivory; width:30em; height:10em;">
+Before
+
+include::inc.adoc[]
+
+After
+	</textarea>
+	
+	<br>
+		<button onClick="cook();">Cook</button>
+	<br>	
+	
+	
+	<div id="cookedDiv"  style="background:tan;">
+		Cooked Goes Here.
+	</div>
+	
+	
+	<!-- 
+Hello, _Asciidoctor_
+
+== Header
+
+Words
+
+=== More header
+
+New
+
+---
+Post HR. image:pen.png[Sunset,30,30]
+
+More words
+
+List:
+
+* Thing
+* thing again
+
+++++
+<div style="border:solid; padding:1em;"> <p> This HTML is passed straight through without being touched! </p></div>
+++++
+
+Ordered List:
+
+. Thing
+.. Sub Thing
+. Another thing 
+
+include::inc.adoc[]
+	
+
+	-->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+</body>	
+</html>
+
+

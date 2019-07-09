@@ -4,7 +4,7 @@
      *      codeMonkey@cwholemaniii.com
      *
      *      Created:        2 March 2019. 	
-     *      Modified:       9 July 2019.
+     *      Modified:       27 March 2019.
      */
 
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
@@ -156,41 +156,56 @@
             }
     </script>       
     <style>
-	*, *:before, *:after {
-    -webkit-box-sizing: border-box; 
-    -moz-box-sizing: border-box; 
-    box-sizing: border-box;
-      }
-	  
         body {
             padding:0;
             margin:0;
             background:radial-gradient(circle at bottom left, rgba(78,179,147,1), rgba(49,125,157,1));
             }
         form {
+            /* 
+			display: grid;
+            height: 100vh;
+            width: 100vw;
+            grid-template-columns: 22vw 78vw;
+            grid-template-rows: 15vh 85vh;
+            */
 			padding:0;
             margin:0;
 
             }
         header {
+            /* grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1; 
+            grid-row-end: 2;
+			*/
             padding: 1em; 
             background:none;
             }
         .tools {
+            /* grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 2;
+            grid-row-end: 3;
+			*/
             padding: 1em 0.25em 1em 0.25em;
             background:none;
 			display: table;
             }
         .workspace {
-			
-			position: absolute;
-			top: 0px;
-            left: 18vw;
-			width:82vw;
-			height: 99vh;
-			
+            /* grid-column-start: 2;
+            grid-column-end: 3;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            */
 			padding: 1em;
-            background:ivory;			
+            background:ivory;
+			
+			float:right;
+            width:82vw;
+			height: 100vh;
+			
+			
 			}
         label{
             width: 30%;
@@ -220,20 +235,17 @@
     </style>
 </head>
 <body>
-	<header class="leftBox">
-		<h1>
-			<img src="pen.png" class="headerIcon">
-			CWCMS  <br> Page Editor
-		</h1>
-		<h3><i>Some Page Title</i></h3>
-	</header>
-		
-		
-		
-<!-- TODO Re-add confirm discard-->
-<form method='post' action='index.php' enctype='multipart/form-data'> <!-- RE ADD THIS: <form method='post' action='index.php' enctype='multipart/form-data' onSubmit="return confirmDiscardLoad(this);">  -->
-<div class="leftBox" style="clear:left;">
-	
+
+
+<div class="leftBox" >
+	<form method='post' action='index.php' enctype='multipart/form-data' >
+		<header> <!-- USE??? <header> ??? -->
+			<h1>
+				<img src="pen.png" class="headerIcon">
+				CWCMS  <br> Page Editor
+			</h1>
+			<h3><i>Some Page Title</i></h3>
+		</header>
 			<fieldset class="collapsible">
 				<legend>Actions</legend>
 					<input type='submit' value='Save Draft' name="save" >
@@ -286,22 +298,29 @@
 				</div>			
 			</fieldset>
 	 
+	</form> 	
+
+	<form method='post' action='index.php' enctype='multipart/form-data' onSubmit="return confirmDiscardLoad(this);">
+			
 		<fieldset  class="collapsible">
 		<legend>Nav</legend>
 			<input type='submit' value="<-- Exit Editor" name="exit">
-			<input type='submit' value='Create New Page' name="new">
+			<input type='submit' value='Create New Fleck' name="new">
 			<br>
+			<input type='submit' value='Load:' name="load" id="load">
 			<input type="text" name ="loadID" size="3" value="3">
-			<input type='submit' value='Load' name="load" id="load">
-		</fieldset>		
-	</div>
+		</fieldset>
+	</form>
+	
+</div>
 
 
-	<textarea class="workspace" id="content" name="content" type="textarea"    onKeyPress="hasChanged();" > 
+<textarea class="workspace" id="content" name="content" type="textarea"    onKeyPress="hasChanged();" > 
 <?php echo $_SESSION['loadContent']; ?> 
-	</textarea>
+</textarea>
         
-</form> 	       
+       
+       
 	   
 	   
 	   
