@@ -4,12 +4,16 @@
      *      codeMonkey@cwholemaniii.com
      *
      *      Created:        2 March 2019. 	
-     *      Modified:       9 July 2019.
+     *      Modified:       19 July 2019.
      */
 
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
     $PATH = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
     require_once ($PATH."utilities/dbHandler.php");
+	//NEEDED FOR PUBLISHING:
+	require_once ($PATH."utilities/publisher.php");
+	//c3Log($PATH."utilities/publisher.php");
+		
     $_SESSION['DB'] = new DbHandler;
     $_SESSION['loadID'] = "1"; 
     $_SESSION['loadName'] = "unSet"; 
@@ -47,33 +51,57 @@
         return false;
         }
 
-    
+	function save(){
+		echo "Saving.";
+		// Pull the values from the form.
+		$inName = trim($_POST['name']);
+		$inContent = trim($_POST['content']);
+		$inID = trim($_POST['id']);
+		
+		// Validate ID.
+		if (validateID($inID)){
+			$_SESSION['DB']->query("UPDATE pages SET "
+				. "p_id = '$inID', "
+				. "name = '$inName', "
+				. "content = '$inContent', "
+				. "updated = CURRENT_TIMESTAMP "
+				. "WHERE p_id = $inID;"
+				);
+			}    
+		else {
+			echo "<div style='background:red;'><p style='font-size:2em;'>Could not save: Attempting to save invalid Page ID: '$inID'.</p></div>";
+			}
+		loadPage($inID);    
+		}
+			
+			
+	function c3Log($say){
+		echo "<script>console.log(\"$say\");</script>";
+		}
+
+	function publish(){
+		save();
+		$pub = new Publisher();
+		$pub->InitMe();
+		$pub->publish(trim($_POST['id']));
+		loadPage(trim($_POST['id']));
+		
+		}				
     
     // Handles form submissions.
     if($_SERVER['REQUEST_METHOD'] == "POST"){
         // Save content from the form to the database.
         if($_POST['save']){
-            echo "Saving.";
-            // Pull the values from the form.
-            $inName = trim($_POST['name']);
-            $inContent = trim($_POST['content']);
-            $inID = trim($_POST['id']);
-            
-            // Validate ID.
-            if (validateID($inID)){
-                $_SESSION['DB']->query("UPDATE pages SET "
-                    . "p_id = '$inID', "
-                    . "name = '$inName', "
-                    . "content = '$inContent', "
-                    . "updated = CURRENT_TIMESTAMP "
-                    . "WHERE p_id = $inID;"
-                    );
-                }    
-            else {
-                echo "<div style='background:red;'><p style='font-size:2em;'>Could not save: Attempting to save invalid Page ID: '$inID'.</p></div>";
-                }
-            loadPage($inID);    
+			save();
+			}
+
+        // Create new Page.    
+        elseif($_POST['publish']){
+            // Save, then run the Publisher utility. 
+            //save();
+			publish();
             }
+
             
         // Load the specified data from the database into the form. 
         elseif($_POST['load']){
@@ -91,6 +119,10 @@
                 echo "<div style='background:red;'><p style='font-size:2em;'>Failed to create new Page.</p></div>";
                 }
             }       
+			
+			
+            
+
     }
 ?>
 <html>
@@ -125,6 +157,8 @@
                 document.getElementById('sequenceNumber').value="-";
                 }
             }
+		
+
     </script>
     <script>
         <!-- Prevents undesired loss of data due to unsaved changes. -->
@@ -182,7 +216,6 @@
 			display: table;
             }
         .workspace {
-			
 			position: absolute;
 			top: 0px;
             left: 18vw;
@@ -217,6 +250,30 @@
 			float:left;
 			/*background:red;*/
 			}
+			
+		table{
+			background:ivory;
+			border:none;
+			}	
+		tr, th, td{
+			border:none;	
+			}	
+		tr:nth-child(even) {
+			background-color: rgb(237, 237, 237);
+			}
+		tr:nth-child(odd) {
+			background-color: white;
+			}
+
+		tr:hover {
+			background-color: rgba(78,179,147,1);
+			font-weight:bold;
+			}	
+
+		th, td {
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+			}  
     </style>
 </head>
 <body>
@@ -286,35 +343,37 @@
 				</div>			
 			</fieldset>
 	 
-		<fieldset  class="collapsible">
+		<fieldset class="collapsible">
 		<legend>Nav</legend>
 			<input type='submit' value="<-- Exit Editor" name="exit">
 			<input type='submit' value='Create New Page' name="new">
 			<br>
 			<input type="text" name ="loadID" size="3" value="3">
 			<input type='submit' value='Load' name="load" id="load">
+		<br>
+		<details style="padding:2px; margin-left:2px; background:none;">
+		 <summary>Existing Page List</summary>
+			<?php displayPages(); ?>
+		</details>		
 		</fieldset>		
+	
+
 	</div>
 
 
-	<textarea class="workspace" id="content" name="content" type="textarea"    onKeyPress="hasChanged();" > 
+	<textarea class="workspace" id="content" name="content" type="textarea" onKeyPress="hasChanged();" >  
 <?php echo $_SESSION['loadContent']; ?> 
 	</textarea>
         
 </form> 	       
 	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
+	
 	   
 </body>
 <script>
+
+	
+	
 (function($) {
         $.fn.collapsible = function(options) {
             this.each(function() {
@@ -354,6 +413,42 @@
 <script>
     $("fieldset.collapsible").collapsible();
 </script>
+
+
+
 </html>
+<?php
+
+
+
+    function displayPages(){
+			//echo "inside";	
+			$results = $_SESSION['DB']->query("SELECT p_id, name, DATE_FORMAT(updated, '%Y-%m-%d \n @%H:%i') AS 'updated' FROM pages;");
+			$cols = ["ID","Name","Updated"];
+			// Output.
+			echo "<table>"
+					. "<tr> <th>$cols[0]</th> <th>$cols[1]</th><th>$cols[2]</th></tr>";
+			for ($i = 0 ; $i < $results->num_rows; ++$i){
+				  $results->data_seek($i);
+				  $row = $results->fetch_array(MYSQLI_NUM);
+				echo "<tr>"; // the tr needs an onMouseOver="setLoadID(current row)" . 
+				for ($j = 0 ; $j < 3 ; ++$j)		    // MAGIC VAR!!
+				echo "<td> " . htmlspecialchars($row[$j]) . "</td>";
+				echo "<td><input type='submit' value='Load' name='load' id='load'></td></tr>";
+				}
+			echo "</table>";
+			}
+
+
+?>
+
+
+
+
+
+
+
+
+
 
 

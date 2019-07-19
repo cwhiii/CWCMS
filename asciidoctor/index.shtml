@@ -1,10 +1,6 @@
 <html>
 <head>
     <title> CWCMS AsciiDoctor Tests </title>
-	
-	
-	
-	
 	<head>
     <title> CWCMS Page Editor </title>
     <script  async type="text/javascript" src="/scripting/jquery/jquery.min.js"></script>
@@ -18,18 +14,16 @@
 
 	
 	
-  <style>
-		*, *:before, *:after {
+	<style>
+	*, *:before, *:after {
 		-webkit-box-sizing: border-box; 
 		-moz-box-sizing: border-box; 
 		box-sizing: border-box;
 		}
-
-        body {
-            padding:0;
-            margin:0;
-            background:radial-gradient(circle at bottom left, rgba(78,179,147,1), rgba(49,125,157,1));
-            }
+	body{
+		padding:0;
+		margin:0;
+		}
 	</style>			
 	
 	<script>
@@ -39,37 +33,52 @@
 			var raw = document.getElementById("rawDiv").value;
 			document.getElementById("cookedDiv").innerHTML = asciidoctor.convert(raw, { 'safe': 'unsafe' });
 			}
+		
 
 	</script>
 	
-	
+ 	
 </head>
 <body>
 	<header>
 		<h1>
-			CWCMS  <br> AsciiDoctor Tests
+			CWCMS  AsciiDoctor Tests		<button onClick="cook();">Cook</button>
 		</h1>
+
 	</header>
 
-	<textarea id="rawDiv" style="background:ivory; width:30em; height:10em;">
+	
+	<!-- <textarea id="rawDiv" style="float:left; width:98vw; height:45vh; background:ivory; overflow:auto; resize:both;" onKeyPress="cook();"> -->
+	<textarea id="rawDiv" style="float:left; width:98vw; height:45vh; background:ivory; overflow:auto; resize:both;">
 Before
 
 include::inc.adoc[]
 
 After
+
+DEFINE: VARIABLES **IN** AsciiDoctor!
+
+Anchors!
+
+
+
 	</textarea>
 	
-	<br>
-		<button onClick="cook();">Cook</button>
-	<br>	
 	
 	
-	<div id="cookedDiv"  style="background:tan;">
+	
+	
+	<div id="cookedDiv"  style="float:left; width:98vw; height:45vh; clear:both; overflow:scroll; background:tan; ">
 		Cooked Goes Here.
 	</div>
 	
+	<iframe src="cheatsheet.html" style="float:left; width:98vw; height:100vh"></iframe>
+	
+	
 	
 	<!-- 
+
+
 Hello, _Asciidoctor_
 
 == Header
@@ -115,5 +124,47 @@ include::inc.adoc[]
 		
 </body>	
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

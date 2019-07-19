@@ -1,12 +1,13 @@
 <?php
 // dbHandler.php 
 
-//echo "DB Handler Loaded.<br>";
+//echo "DB Handler loading...<br>";
+
 require_once ("../db_touch/db_credentials.php");
 
 class DbHandler{
     function do_foo(){
-        echo "Doing foo."; 
+        echo "Doing foo: DB Handler loaded & running."; 
         }
         
         

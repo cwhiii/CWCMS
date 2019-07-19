@@ -1,0 +1,8 @@
+[18-Jul-2019 21:24:36 UTC] PHP Notice:  Undefined variable: P_ID in /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php on line 56
+[18-Jul-2019 21:24:36 UTC] PHP Stack trace:
+[18-Jul-2019 21:24:36 UTC] PHP   1. {main}() /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php:0
+[18-Jul-2019 21:24:36 UTC] PHP   2. getRaw() /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php:43
+[18-Jul-2019 21:24:36 UTC] PHP Notice:  Undefined variable: P_ID in /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php on line 57
+[18-Jul-2019 21:24:36 UTC] PHP Stack trace:
+[18-Jul-2019 21:24:36 UTC] PHP   1. {main}() /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php:0
+[18-Jul-2019 21:24:36 UTC] PHP   2. getRaw() /home/cwholema/public_html/playground/CWCMS/utilities/publisher.php:43
