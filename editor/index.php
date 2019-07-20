@@ -4,7 +4,7 @@
      *      codeMonkey@cwholemaniii.com
      *
      *      Created:        2 March 2019. 	
-     *      Modified:       19 July 2019.
+     *      Modified:       20 July 2019.
      */
 
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
@@ -17,6 +17,7 @@
     $_SESSION['DB'] = new DbHandler;
     $_SESSION['loadID'] = "1"; 
     $_SESSION['loadName'] = "unSet"; 
+    $_SESSION['loadTitle'] = "unSet"; 
     $_SESSION['loadContent'] = "unSet";
     $_SESSION['loadState'] = "unSet";
     $_SESSION['updated'] = "unSet";
@@ -30,6 +31,7 @@
             $row = $results->fetch_array(MYSQLI_ASSOC);
             $_SESSION['loadID'] =  htmlspecialchars($row['p_id']);
             $_SESSION['loadName'] =  htmlspecialchars($row['name']);
+			$_SESSION['loadTitle'] = htmlspecialchars($row['title']);
             $_SESSION['loadContent'] =  htmlspecialchars($row['content']);
             $_SESSION['updated'] =  htmlspecialchars($row['updated']);
             }    
@@ -55,6 +57,7 @@
 		echo "Saving.";
 		// Pull the values from the form.
 		$inName = trim($_POST['name']);
+		$inTitle = trim($_POST['title']);
 		$inContent = trim($_POST['content']);
 		$inID = trim($_POST['id']);
 		
@@ -63,6 +66,7 @@
 			$_SESSION['DB']->query("UPDATE pages SET "
 				. "p_id = '$inID', "
 				. "name = '$inName', "
+				. "title = '$inName', "
 				. "content = '$inContent', "
 				. "updated = CURRENT_TIMESTAMP "
 				. "WHERE p_id = $inID;"
@@ -334,6 +338,7 @@
 						</span>
 					</div>
 					<br>
+					<label for="title">Title:</label>       <?php echo "<input class='labled' type= 'text' name='title' id='title' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadTitle'].">  "; ?><br>
 					<label for="name">Name:</label>         <?php echo "<input class='labled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName'].">  "; ?><br>
 					<label for="template">Template:</label> <input class='labled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
 					<label for="location">Location </label> <input class='labled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>

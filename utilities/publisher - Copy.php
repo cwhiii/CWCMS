@@ -5,12 +5,11 @@ class Publisher{
 		function InitMe(){
 			error_reporting(E_ALL);
 			$tmp = fopen("error_c3Log", 'w') or die("Failed to open error c3Log.");
-			$_SERVER['PATH'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
-			$_SERVER['HTML_PATH'] = "/playground/CWCMS";
-			$_SESSION['FULLPATH'] = $_SERVER['PATH']."utilities/test_pages/";
-			require_once ($_SERVER['PATH']."utilities/dbHandler.php");
+			$PATH = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
+			$_SESSION['FULLPATH'] = $PATH."utilities/test_pages/";
+			require_once ($PATH."utilities/dbHandler.php");
 				$_SESSION['DB'] = new DbHandler;
-			$_SESSION['pageExtention'] = ".php";
+			$_SESSION['pageExtention'] = ".html";
 			
 			// Create Page Details
 			$_SESSION['P_ID'] = 0;
@@ -19,7 +18,7 @@ class Publisher{
 			$_SESSION['TITLE'] = "unSet"; 
 			$_SESSION['URL'] = "unSet"; 
 			$_SESSION['UPDATED'] = "unSet"; 
-			//$_SESSION['COOKED_CONTENT'] = "unSet"; 
+			$_SESSION['COOKED_CONTENT'] = "unSet"; 
 			}
 
 		// -------------------------------------  START Processing & Code execution. ------------------------------------- 
@@ -81,29 +80,26 @@ class Publisher{
 			}
 
 		function buildPage(){
-			$cookedContent = '';
-			$cookedContent .= "<?php \$_SERVER['PATH'] = \$_SERVER['DOCUMENT_ROOT'].'/playground/CWCMS'; ?> \n";
-			$cookedContent .= "<html><head>\n"; 
-			$cookedContent .= "<title>".$_SERVER['TITLE']."</title>\n"; 
-			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/boilerplate.html'); ?> \n";
-			$cookedContent .= "</head><body>\n";
+			$_SESSION['COOKED_CONTENT'] = 
+				"<html>
+					<head>
+						<meta charset='utf-8'/>
+						<title>".$_SESSION['TITLE']."</title>
+						<script src='/playground/CWCMS/utilities/asciidoctor.min.js'></script>
+					</head>
+					<body>						
+						<script>
+							var asciidoctor = Asciidoctor();
+							var raw = `".$_SESSION['RAW_CONTENT']."`;
+							console.log('Spinning up the grill...');
+							var cooked = asciidoctor.convert(raw, { 'safe': 'unsafe' });
+							document.write(cooked);
+						</script>
+					</body>
+				</html>
+				";
 			
-			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/header.html'); ?> \n";
-			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/sidebar.html');?> \n";
-			
-			$cookedContent .=" 
-				<script>
-					console.log('Spinning up the grill...');
-					var asciidoctor = Asciidoctor();
-					Promise.all([fetch('".$_SERVER['HTML_PATH']."/utilities/test_pages/testing.adoc').then(x => x.text())]) 
-						.then(([raw, sample2Resp]) => {
-						$('body').append(asciidoctor.convert(raw, { 'safe': 'unsafe' }));
-						});
-				</script>
-				\n";
-			$cookedContent .= "</body></html>";
-			
-			if (file_put_contents($_SESSION['FINAL_PAGE_URL'], $cookedContent) !== false) {
+			if (file_put_contents($_SESSION['FINAL_PAGE_URL'], $_SESSION['COOKED_CONTENT']) !== false) {
 				$this->c3Log("File created: " . basename($_SESSION['FINAL_PAGE_URL']) ."." );
 				} 
 			else {
@@ -112,7 +108,6 @@ class Publisher{
 			}
 	}
 ?>
-
 
 
 
