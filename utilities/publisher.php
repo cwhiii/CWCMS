@@ -7,14 +7,13 @@ class Publisher{
 			$tmp = fopen("error_c3Log", 'w') or die("Failed to open error c3Log.");
 			$_SERVER['PATH'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
 			$_SERVER['HTML_PATH'] = "/playground/CWCMS";
-			
-
+			$_SESSION['GROUP'] = "unSet"; 
 			$_SESSION['NAME'] = "unSet"; 
 
-			
 			require_once ($_SERVER['PATH']."utilities/dbHandler.php");
-				$_SESSION['DB'] = new DbHandler;
-			
+			$_SESSION['DB'] = new DbHandler;
+			require_once "../modules/make_safe_dir.php";
+
 			// Create Page Details
 			$_SESSION['P_ID'] = 0;
 			$_SESSION['RAW_CONTENT'] = "unSet"; 
@@ -31,11 +30,13 @@ class Publisher{
 			$this->echoAll();
 			$this->c3Log("Final Page URL:".$_SESSION['FINAL_PAGE_URL']);
 			$this->buildAsciiDoc();
+			
 			$this->buildPage();
 			}
 		
 		
 		// -------------------------------------  FUNCTION DEFINITIONS ------------------------------------- 
+		
 		function publishTouch(){
 			c3Log("HELLO, This is the Publisher utility.");
 			}
@@ -54,18 +55,19 @@ class Publisher{
 			$results = $_SESSION['DB']->query("SELECT p_id, name, title, content, url, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = ".$_SESSION['P_ID'].";");
 			$row = $results->fetch_array(MYSQLI_ASSOC);
 			$_SESSION['NAME'] =  strtolower(htmlspecialchars($row['name']));
-						
-				$group = "test_group"; // This should be universal. 
-				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/$group/".$_SESSION['NAME']."/";
-				
+					
+				$_SESSION['GROUP'] = "test_group"; // This should be pulled from the DB. 
+				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['GROUP']."/".$_SESSION['NAME']."/";
 				$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
 				$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
 				
-
+				
 			$_SESSION['TITLE'] = htmlspecialchars($row['title']);
 			$_SESSION['RAW_CONTENT'] = htmlspecialchars($row['content']);
 			$_SESSION['URL'] = htmlspecialchars($row['url']);
 			$_SESSION['UPDATED'] = htmlspecialchars($row['updated']);		
+			
+			
 			}
 			
 		function echoAll(){
@@ -87,13 +89,13 @@ class Publisher{
 				$this->c3Log("Cannot create file (" . basename($_SESSION['FINAL_ASCIIDOC_URL']) );
 				}
 			}
+			
 
 		function buildPage(){
-			$group = "test_group"; // This should be universal. 
-			$asciiDocConfigs = "\n:imagesdir: $group/images/ \n";
+			safeMkDir($_SESSION['FULLPATH']);	
+			$asciiDocConfigs = "\n:imagesdir: ".$_SESSION['GROUP']."/images/ \n";
 			// $('body').append(asciidoctor.convert(". $asciiDocConfigs .", { 'safe': 'unsafe' }));
 					
-			
 			$cookedContent = "";
 			$cookedContent .= "<html>\n<head>\n";
 			$cookedContent .= "<title>".$_SESSION['TITLE']."</title>\n";
@@ -106,13 +108,13 @@ class Publisher{
 				<script>
 					console.log('Spinning up the grill...');
 					var asciidoctor = Asciidoctor();
-					Promise.all([fetch('".$_SERVER['HTML_PATH']."/root/content/$group/".$_SESSION['NAME'] ."/ascii.adoc').then(x => x.text())])  
+					Promise.all([fetch('".$_SERVER['HTML_PATH']."/root/content/".$_SESSION['GROUP']."/".$_SESSION['NAME'] ."/ascii.adoc').then(x => x.text())])  
 						.then(([raw, sample2Resp]) => {
 						$('body').append(asciidoctor.convert(raw, { 'safe': 'unsafe' }));
 						});
-						
+				console.log('Grilling Complete.');
 				</script>
-				\n";
+				\n ";
 			$cookedContent .= "</body>\n</html>";
 			
 			if (file_put_contents($_SESSION['FINAL_PAGE_URL'], $cookedContent) !== false) {
