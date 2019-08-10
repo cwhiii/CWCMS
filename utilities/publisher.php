@@ -7,14 +7,16 @@ class Publisher{
 			$tmp = fopen("error_c3Log", 'w') or die("Failed to open error c3Log.");
 			$_SERVER['PATH'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
 			$_SERVER['HTML_PATH'] = "/playground/CWCMS";
-			$_SESSION['FULLPATH'] = $_SERVER['PATH']."utilities/test_pages/";
+			
+
+			$_SESSION['NAME'] = "unSet"; 
+
+			
 			require_once ($_SERVER['PATH']."utilities/dbHandler.php");
 				$_SESSION['DB'] = new DbHandler;
-			$_SESSION['pageExtention'] = ".php";
 			
 			// Create Page Details
 			$_SESSION['P_ID'] = 0;
-			$_SESSION['NAME'] = "unSet"; 
 			$_SESSION['RAW_CONTENT'] = "unSet"; 
 			$_SESSION['TITLE'] = "unSet"; 
 			$_SESSION['URL'] = "unSet"; 
@@ -27,8 +29,6 @@ class Publisher{
 		function publish($pid){
 			$this->getRaw($pid);
 			$this->echoAll();
-			$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] . $_SESSION['NAME'] . ".adoc";
-			$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . $_SESSION['NAME'] . $_SESSION['pageExtention'];
 			$this->c3Log("Final Page URL:".$_SESSION['FINAL_PAGE_URL']);
 			$this->buildAsciiDoc();
 			$this->buildPage();
@@ -54,6 +54,14 @@ class Publisher{
 			$results = $_SESSION['DB']->query("SELECT p_id, name, title, content, url, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = ".$_SESSION['P_ID'].";");
 			$row = $results->fetch_array(MYSQLI_ASSOC);
 			$_SESSION['NAME'] =  strtolower(htmlspecialchars($row['name']));
+						
+				$group = "test_group"; // This should be universal. 
+				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/$group/".$_SESSION['NAME']."/";
+				
+				$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
+				$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
+				
+
 			$_SESSION['TITLE'] = htmlspecialchars($row['title']);
 			$_SESSION['RAW_CONTENT'] = htmlspecialchars($row['content']);
 			$_SESSION['URL'] = htmlspecialchars($row['url']);
@@ -81,27 +89,31 @@ class Publisher{
 			}
 
 		function buildPage(){
-			$cookedContent = '';
+			$group = "test_group"; // This should be universal. 
+			$asciiDocConfigs = "\n:imagesdir: $group/images/ \n";
+			// $('body').append(asciidoctor.convert(". $asciiDocConfigs .", { 'safe': 'unsafe' }));
+					
+			
+			$cookedContent = "";
+			$cookedContent .= "<html>\n<head>\n";
+			$cookedContent .= "<title>".$_SESSION['TITLE']."</title>\n";
 			$cookedContent .= "<?php \$_SERVER['PATH'] = \$_SERVER['DOCUMENT_ROOT'].'/playground/CWCMS'; ?> \n";
-			$cookedContent .= "<html><head>\n"; 
-			$cookedContent .= "<title>".$_SERVER['TITLE']."</title>\n"; 
 			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/boilerplate.html'); ?> \n";
 			$cookedContent .= "</head><body>\n";
-			
 			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/header.html'); ?> \n";
 			$cookedContent .= "<?php echo file_get_contents(\$_SERVER['PATH'].'/parts/sidebar.html');?> \n";
-			
 			$cookedContent .=" 
 				<script>
 					console.log('Spinning up the grill...');
 					var asciidoctor = Asciidoctor();
-					Promise.all([fetch('".$_SERVER['HTML_PATH']."/utilities/test_pages/testing.adoc').then(x => x.text())]) 
+					Promise.all([fetch('".$_SERVER['HTML_PATH']."/root/content/$group/".$_SESSION['NAME'] ."/ascii.adoc').then(x => x.text())])  
 						.then(([raw, sample2Resp]) => {
 						$('body').append(asciidoctor.convert(raw, { 'safe': 'unsafe' }));
 						});
+						
 				</script>
 				\n";
-			$cookedContent .= "</body></html>";
+			$cookedContent .= "</body>\n</html>";
 			
 			if (file_put_contents($_SESSION['FINAL_PAGE_URL'], $cookedContent) !== false) {
 				$this->c3Log("File created: " . basename($_SESSION['FINAL_PAGE_URL']) ."." );

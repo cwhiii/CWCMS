@@ -1,10 +1,10 @@
 <?php   
-    /*      Page Editor 0.1 for CWCMS. 
+    /*      Page Editor 0.3 for CWCMS. 
      *      www.cwholemaniii.com
      *      codeMonkey@cwholemaniii.com
      *
-     *      Created:        2 March 2019. 	
-     *      Modified:       20 July 2019.
+     *      Created:        2 March  2019. 	
+     *      Modified:       9 August 2019.
      */
 
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
@@ -27,11 +27,12 @@
         // Validate ID.
 		//echo "<div style='background:tan;'><p style='font-size:2em;'>Attempting to load: '$aPage'.</p></div>";
         if (validateID($aPage)){
-            $results = $_SESSION['DB']->query("SELECT p_id, name, content, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = $aPage;");
+            $results = $_SESSION['DB']->query("SELECT p_id, name, title, content, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = $aPage;");
             $row = $results->fetch_array(MYSQLI_ASSOC);
             $_SESSION['loadID'] =  htmlspecialchars($row['p_id']);
             $_SESSION['loadName'] =  htmlspecialchars($row['name']);
-			$_SESSION['loadTitle'] = htmlspecialchars($row['title']);
+			$_SESSION['loadTitle'] = htmlspecialchars($row['title']); 
+			echo $_SESSION['loadTitle'];
             $_SESSION['loadContent'] =  htmlspecialchars($row['content']);
             $_SESSION['updated'] =  htmlspecialchars($row['updated']);
             }    
@@ -58,15 +59,20 @@
 		// Pull the values from the form.
 		$inName = trim($_POST['name']);
 		$inTitle = trim($_POST['title']);
-		$inContent = trim($_POST['content']);
 		$inID = trim($_POST['id']);
+		 	// MAGIC:FIX. 
+			
+		
+		
+		$inContent = addslashes(trim($_POST['content'])); // Bug fixed. 
 		
 		// Validate ID.
 		if (validateID($inID)){
 			$_SESSION['DB']->query("UPDATE pages SET "
 				. "p_id = '$inID', "
 				. "name = '$inName', "
-				. "title = '$inName', "
+				. "title = '$inTitle', "
+				//. "content = '". addslashes($inContent) ."', "
 				. "content = '$inContent', "
 				. "updated = CURRENT_TIMESTAMP "
 				. "WHERE p_id = $inID;"
@@ -234,7 +240,7 @@
             float: left;
             text-align: right;
             }      
-        .labled{
+        .labeled{
             width: 65%;
             margin-left: 5%;
             float:left;
@@ -314,9 +320,8 @@
 			<fieldset class="collapsible">	
 				<legend>Page Info</legend>
 				<div>
-					<label for="title">Title:</label>  <input class='labled' type="text" name="title" value="default"><br>
 					<label for="title">Group:</label> 
-					<div class='labled' >
+					<div class='labeled' >
 						<select id="isGroup" onChange="toggleGroups();" disabled>
 							<option type="radio" name="standalone" value="standalone">Standalone</option>
 							<option type="radio" name="collection" value="collection">Collection</option>
@@ -338,13 +343,13 @@
 						</span>
 					</div>
 					<br>
-					<label for="title">Title:</label>       <?php echo "<input class='labled' type= 'text' name='title' id='title' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadTitle'].">  "; ?><br>
-					<label for="name">Name:</label>         <?php echo "<input class='labled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName'].">  "; ?><br>
-					<label for="template">Template:</label> <input class='labled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
-					<label for="location">Location </label> <input class='labled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
-					<label for="id">ID:</label>             <?php echo "<input class='labled' type='text' name='id' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
-					<label for="state">State:</label>       <?php echo "<input class='labled' type='text' name='state' size='8' value='" . $_SESSION['loadState'] . "' readonly style='color:grey;'><br>"; ?> 
-					<label for="updated">Updated:</label>   <?php echo "<input class='labled' type='text' name='updated' size='8' value='" . $_SESSION['updated'] . "' readonly style='color:grey;'><br>"; ?> 
+					<label for="title">Title:</label>       <?php echo "<input class='labeled' type= 'text' name='title' id='title' size='25' value=".$_SESSION['loadTitle'].">  "; ?><br>
+					<label for="name">Name:</label>         <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:grey;' readonly>  "; ?><br>
+					<label for="template">Template:</label> <input class='labeled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
+					<label for="location">Location </label> <input class='labeled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
+					<label for="id">ID:</label>             <?php echo "<input class='labeled' type='text' name='id' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
+					<label for="state">State:</label>       <?php echo "<input class='labeled' type='text' name='state' size='8' value='" . $_SESSION['loadState'] . "' readonly style='color:grey;'><br>"; ?> 
+					<label for="updated">Updated:</label>   <?php echo "<input class='labeled' type='text' name='updated' size='8' value='" . $_SESSION['updated'] . "' readonly style='color:grey;'><br>"; ?> 
 				</div>			
 			</fieldset>
 	 
@@ -366,9 +371,9 @@
 	</div>
 
 
-	<textarea class="workspace" id="content" name="content" type="textarea" onKeyPress="hasChanged();" >  
+<textarea class="workspace" id="content" name="content" type="textarea" onKeyPress="hasChanged();" >  
 <?php echo $_SESSION['loadContent']; ?> 
-	</textarea>
+</textarea>
         
 </form> 	       
 	   
