@@ -21,21 +21,23 @@
     $_SESSION['loadContent'] = "unSet";
     $_SESSION['loadState'] = "unSet";
     $_SESSION['updated'] = "unSet";
-
+	$_SESSION['loadBook'] = "-1";
     
     function loadPage($aPage){
         // Validate ID.
 		//echo "<div style='background:tan;'><p style='font-size:2em;'>Attempting to load: '$aPage'.</p></div>";
         if (validateID($aPage)){
-            $results = $_SESSION['DB']->query("SELECT p_id, name, title, content, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = $aPage;");
+            $results = $_SESSION['DB']->query("SELECT p_id, b_id, name, title, content, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = $aPage;");
             $row = $results->fetch_array(MYSQLI_ASSOC);
             $_SESSION['loadID'] =  htmlspecialchars($row['p_id']);
             $_SESSION['loadName'] =  htmlspecialchars($row['name']);
 			$_SESSION['loadTitle'] = htmlspecialchars($row['title']); 
-			echo $_SESSION['loadTitle'];
+			//echo $_SESSION['loadTitle'];
             $_SESSION['loadContent'] =  htmlspecialchars($row['content']);
             $_SESSION['updated'] =  htmlspecialchars($row['updated']);
-            }    
+            
+			$_SESSION['loadBook'] =  htmlspecialchars($row['b_id']);
+			}    
         else {
             echo "<div style='background:red;'><p style='font-size:2em;'>Could not load: Attempting to load invalid Page ID: '$aPage'.</p></div>";
             }           
@@ -54,23 +56,20 @@
         return false;
         }
 	
-	function determineBook(){
-		return "1";	 // b_id 0 is hard coded as Book: General.
-		}
+	// b_id 1 is hard-coded as Book "General."
 
 	function save(){
 		echo "Saving.";
 		// Pull the values from the form.
 		$inID = trim($_POST['id']); 
-		$inBook = determineBook();
-		
+		//$inBook = determineBook();
 		// Validate ID.
 		if (validateID($inID)){
 			$_SESSION['DB']->query("UPDATE pages SET "
 				. "p_id = '$inID', "
 				. "name = '".trim($_POST['name'])."', "
 				. "title = '".trim($_POST['title'])."', "
-				. "b_id = '".determineBook()."', "
+				. "b_id = '".trim($_POST['book'])."', "
 				. "content = '".addslashes(trim($_POST['content']))."', "
 				. "updated = CURRENT_TIMESTAMP "
 				. "WHERE p_id = $inID;"
@@ -93,7 +92,6 @@
 		$pub->InitMe();
 		$pub->publish(trim($_POST['id']));
 		loadPage(trim($_POST['id']));
-		
 		}				
     
     // Handles form submissions.
@@ -110,12 +108,10 @@
 			publish();
             }
 
-            
         // Load the specified data from the database into the form. 
         elseif($_POST['load']){
             loadPage(trim($_POST['loadID']));
             }
-            
             
         // Create new Page.    
         elseif($_POST['new']){
@@ -127,11 +123,7 @@
                 echo "<div style='background:red;'><p style='font-size:2em;'>Failed to create new Page.</p></div>";
                 }
             }       
-			
-			
-            
-
-    }
+	}
 ?>
 <html>
 <head>
@@ -144,37 +136,13 @@
     <LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
     <meta charset="utf-8"> 
     <script>
-        <!-- Handles activation & deactivation of sub Books. -->
-        function toggleBooks(){		
-            var value = document.getElementById("isBook").value;
-
-            if(value == "collection") {
-                document.getElementById("whichBook").disabled = false;
-                $("#books").show();
-                }
-            else if(value == "series") {
-                $("#books").show();
-                document.getElementById("whichBook").disabled = false;
-                document.getElementById("sequenceNumber").disabled = false;
-                }
-            else{
-                $("#books").hide();
-                document.getElementById("whichBook").disabled = true;
-                document.getElementById("sequenceNumber").disabled = true;
-                document.getElementById('whichBook').value="-";
-                document.getElementById('sequenceNumber').value="-";
-                }
-            }
-		
-
-    </script>
-    <script>
         <!-- Prevents undesired loss of data due to unsaved changes. -->
-        $changed = false;
+        $changed = false;        
         
-        function hasChanged(){
+		function hasChanged(){
             $changed = true;
             }
+			
         function confirmDiscardLoad(){
             if($changed){
                 return confirm('Warning! There are unsaved changes. \n\nDiscard changes & load anyway?');
@@ -183,7 +151,7 @@
                 document.getElementById("form_load").submit();
                 }
             }
-            
+			
         function confirmDiscardNew(){
             if($changed){
                 return confirm('Warning! There are unsaved changes. \n\nDiscard changes & create new Page?');
@@ -192,7 +160,7 @@
                 document.getElementById("form_new").submit();
                 }
             }
-
+			
         function cancel(){
             document.getElementById("discardDialog").close();
             }
@@ -318,32 +286,23 @@
 			<fieldset class="collapsible">	
 				<legend>Page Info</legend>
 				<div>
-					<label for="title" title="A group or collection.">Book:</label> 
+					<label for="book" title="A group or collection.">Book:</label> 
+					
 					<div class='labeled' > 
-						<?php echo " <select id='isBook' onChange='toggleBooks();'  value='".$_SESSION['loadBook']."'>"; ?>
-							<option type="radio" name="standalone" value="standalone">Standalone</option>
-							<option type="radio" name="collection" value="collection">Collection</option>
-							<option type="radio" name="series" value="series">Series</option>
-						</select><br>
-						<span style="display:none;" id="books" style="width:100%;"> 
-							<select id="whichBook" >
-								<option>-</option>
-								<option>Book 1</option>
-								<option>Book 2</option>
-								<option>New</option>
-							</select>
-							<select id="sequenceNumber" >
-								<option>-</option>
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-							</select>
-						</span>
+						<nobr>
+						<button style="width:3.5em" title="Create New Book" onClick="console.log('This should really do something... ')">New</button>
+						<?php echo " <select id='book' name='book'>"; ?>
+							<?php displayBooks(); ?>
+						</select>
+						</nobr><br>
 					</div>
+					
+					<div></div>
+					
 					<br>
 					<label for="title">Title:</label>       <?php echo "<input class='labeled' type= 'text' name='title' id='title' size='25' value=".$_SESSION['loadTitle'].">  "; ?><br>
 					<label for="name" title='WARNING: Changing this can break existing links!'>Name:</label> <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:orange;'>  "; ?><br>
-					<label for="template">Template:</label> <input class='labeled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
+					<label for="template">Template:</label> <input class='labeled' type="text" name="template" value="default" style="color:grey;" readonly><br>
 					<label for="location">Location </label> <input class='labeled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
 					<label for="id">ID:</label>             <?php echo "<input class='labeled' type='text' name='id' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
 					<label for="state">State:</label>       <?php echo "<input class='labeled' type='text' name='state' size='8' value='" . $_SESSION['loadState'] . "' readonly style='color:grey;'><br>"; ?> 
@@ -440,12 +399,46 @@
 				  $results->data_seek($i);
 				  $row = $results->fetch_array(MYSQLI_NUM);
 				echo "<tr>"; // the tr needs an onMouseOver="setLoadID(current row)" . 
-				for ($j = 0 ; $j < 3 ; ++$j)		    // MAGIC VAR!!
+				for ($j = 0 ; $j < count($cols) ; ++$j)		   
 				echo "<td> " . htmlspecialchars($row[$j]) . "</td>";
 				echo "<td><input type='submit' value='Load' name='load' id='load'></td></tr>";
 				}
 			echo "</table>";
 			}
+
+
+    function displayBooks(){
+			//echo "inside";	
+			
+			$results = $_SESSION['DB']->query("SELECT b_id, name FROM books;");
+            //$row = $results->fetch_array(MYSQLI_ASSOC);
+			$cols = ["b_id", "name"];
+			
+			//echo "<span style='background:red;'>Some Book List<span>";
+			//echo "<option name='book' value='$cols[0]'>$cols[1]</option>";
+			
+			
+			for ($i = 0 ; $i < $results->num_rows; ++$i){
+				  $results->data_seek($i);
+				  $row = $results->fetch_array(MYSQLI_NUM);
+				  if($row[0] == $_SESSION['loadBook']){
+					echo "<option name='book' value='".htmlspecialchars($row[0])."' selected>".htmlspecialchars($row[1]) ."</option>";
+					}
+				  else{
+					echo "<option name='book' value='".htmlspecialchars($row[0])."'>".htmlspecialchars($row[1]) ."</option>";
+					}
+				}
+			}
+
+
+
+			/*
+				$results = $_SESSION['DB']->query("SELECT b_id, name FROM books;");
+				$row = $results->fetch_array(MYSQLI_ASSOC);
+				$_SESSION['B_ID'] =  htmlspecialchars($row['b_id']);
+				$_SESSION['loadBook'] =  htmlspecialchars($row['name']);
+			*/	
+
 
 
 ?>

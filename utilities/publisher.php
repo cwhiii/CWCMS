@@ -98,14 +98,14 @@ class Publisher{
 				} 
 			else {
 				$this->c3Log("Cannot create file (" . basename($_SESSION['FINAL_ASCIIDOC_URL']) );
+				echo "<script>console.log('Cannot create file: ".basename($_SESSION['FINAL_ASCIIDOC_URL']).".');</script>";
 				}
 			}
 			
 
 		function buildPage(){
 			safeMkDir($_SESSION['FULLPATH']);	
-			$asciiDocConfigs = "\n:imagesdir: ".$_SESSION['BOOK']."/images/ \n";
-			// $('body').append(asciidoctor.convert(". $asciiDocConfigs .", { 'safe': 'unsafe' }));
+			$asciiDocConfigs = "\n:imagesdir: ../images/ \n"; // This will need to be enhanced when there are sub books. 
 					
 			$cookedContent = "";
 			$cookedContent .= "<html>\n<head>\n";
