@@ -7,7 +7,7 @@ class Publisher{
 			$tmp = fopen("error_c3Log", 'w') or die("Failed to open error c3Log.");
 			$_SERVER['PATH'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
 			$_SERVER['HTML_PATH'] = "/playground/CWCMS";
-			$_SESSION['GROUP'] = "unSet"; 
+			$_SESSION['BOOK'] = "unSet"; 
 			$_SESSION['NAME'] = "unSet"; 
 
 			require_once ($_SERVER['PATH']."utilities/dbHandler.php");
@@ -56,8 +56,8 @@ class Publisher{
 			$row = $results->fetch_array(MYSQLI_ASSOC);
 			$_SESSION['NAME'] =  strtolower(htmlspecialchars($row['name']));
 					
-				$_SESSION['GROUP'] = "test_group"; // This should be pulled from the DB. 
-				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['GROUP']."/".$_SESSION['NAME']."/";
+				$_SESSION['BOOK'] = "test_group"; // This should be pulled from the DB. 
+				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['BOOK']."/".$_SESSION['NAME']."/";
 				$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
 				$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
 				
@@ -93,7 +93,7 @@ class Publisher{
 
 		function buildPage(){
 			safeMkDir($_SESSION['FULLPATH']);	
-			$asciiDocConfigs = "\n:imagesdir: ".$_SESSION['GROUP']."/images/ \n";
+			$asciiDocConfigs = "\n:imagesdir: ".$_SESSION['BOOK']."/images/ \n";
 			// $('body').append(asciidoctor.convert(". $asciiDocConfigs .", { 'safe': 'unsafe' }));
 					
 			$cookedContent = "";
@@ -108,7 +108,7 @@ class Publisher{
 				<script>
 					console.log('Spinning up the grill...');
 					var asciidoctor = Asciidoctor();
-					Promise.all([fetch('".$_SERVER['HTML_PATH']."/root/content/".$_SESSION['GROUP']."/".$_SESSION['NAME'] ."/ascii.adoc').then(x => x.text())])  
+					Promise.all([fetch('".$_SERVER['HTML_PATH']."/root/content/".$_SESSION['BOOK']."/".$_SESSION['NAME'] ."/ascii.adoc').then(x => x.text())])  
 						.then(([raw, sample2Resp]) => {
 						$('body').append(asciidoctor.convert(raw, { 'safe': 'unsafe' }));
 						});

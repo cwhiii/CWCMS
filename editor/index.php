@@ -57,23 +57,15 @@
 	function save(){
 		echo "Saving.";
 		// Pull the values from the form.
-		$inName = trim($_POST['name']);
-		$inTitle = trim($_POST['title']);
-		$inID = trim($_POST['id']);
-		 	// MAGIC:FIX. 
-			
-		
-		
-		$inContent = addslashes(trim($_POST['content'])); // Bug fixed. 
+		$inID = trim($_POST['id']); 
 		
 		// Validate ID.
 		if (validateID($inID)){
 			$_SESSION['DB']->query("UPDATE pages SET "
 				. "p_id = '$inID', "
-				. "name = '$inName', "
-				. "title = '$inTitle', "
-				//. "content = '". addslashes($inContent) ."', "
-				. "content = '$inContent', "
+				. "name = '".trim($_POST['name'])."', "
+				. "title = '".trim($_POST['title'])."', "
+				. "content = '".addslashes(trim($_POST['content']))."', "
 				. "updated = CURRENT_TIMESTAMP "
 				. "WHERE p_id = $inID;"
 				);
@@ -146,24 +138,24 @@
     <LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
     <meta charset="utf-8"> 
     <script>
-        <!-- Handles activation & deactivation of sub Groups. -->
-        function toggleGroups(){		
-            var value = document.getElementById("isGroup").value;
+        <!-- Handles activation & deactivation of sub Books. -->
+        function toggleBooks(){		
+            var value = document.getElementById("isBook").value;
 
             if(value == "collection") {
-                document.getElementById("whichGroup").disabled = false;
-                $("#groupings").show();
+                document.getElementById("whichBook").disabled = false;
+                $("#books").show();
                 }
             else if(value == "series") {
-                $("#groupings").show();
-                document.getElementById("whichGroup").disabled = false;
+                $("#books").show();
+                document.getElementById("whichBook").disabled = false;
                 document.getElementById("sequenceNumber").disabled = false;
                 }
             else{
-                $("#groupings").hide();
-                document.getElementById("whichGroup").disabled = true;
+                $("#books").hide();
+                document.getElementById("whichBook").disabled = true;
                 document.getElementById("sequenceNumber").disabled = true;
-                document.getElementById('whichGroup').value="-";
+                document.getElementById('whichBook').value="-";
                 document.getElementById('sequenceNumber').value="-";
                 }
             }
@@ -320,21 +312,21 @@
 			<fieldset class="collapsible">	
 				<legend>Page Info</legend>
 				<div>
-					<label for="title">Group:</label> 
+					<label for="title" title="A group or collection.">Book:</label> 
 					<div class='labeled' >
-						<select id="isGroup" onChange="toggleGroups();" disabled>
+						<select id="isBook" onChange="toggleBooks();" >
 							<option type="radio" name="standalone" value="standalone">Standalone</option>
 							<option type="radio" name="collection" value="collection">Collection</option>
 							<option type="radio" name="series" value="series">Series</option>
 						</select><br>
-						<span style="display:none;" id="groupings" style="width:100%;"> 
-							<select id="whichGroup" disabled>
+						<span style="display:none;" id="books" style="width:100%;"> 
+							<select id="whichBook" >
 								<option>-</option>
-								<option>Group 1</option>
-								<option>Group 2</option>
+								<option>Book 1</option>
+								<option>Book 2</option>
 								<option>New</option>
 							</select>
-							<select id="sequenceNumber" disabled>
+							<select id="sequenceNumber" >
 								<option>-</option>
 								<option>1</option>
 								<option>2</option>
@@ -344,7 +336,7 @@
 					</div>
 					<br>
 					<label for="title">Title:</label>       <?php echo "<input class='labeled' type= 'text' name='title' id='title' size='25' value=".$_SESSION['loadTitle'].">  "; ?><br>
-					<label for="name">Name:</label>         <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:grey;' readonly>  "; ?><br>
+					<label for="name" title='WARNING: Changing this can break existing links!'>Name:</label>         <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:orange;'>  "; ?><br>
 					<label for="template">Template:</label> <input class='labeled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
 					<label for="location">Location </label> <input class='labeled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
 					<label for="id">ID:</label>             <?php echo "<input class='labeled' type='text' name='id' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
