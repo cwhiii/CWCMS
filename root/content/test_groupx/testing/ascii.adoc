@@ -1,3 +1,0 @@
- Test 23
-	
-image::girl2.jpg[]

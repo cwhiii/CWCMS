@@ -9,11 +9,10 @@ class Publisher{
 			$_SERVER['HTML_PATH'] = "/playground/CWCMS";
 			$_SESSION['BOOK'] = "unSet"; 
 			$_SESSION['NAME'] = "unSet"; 
-
 			require_once ($_SERVER['PATH']."utilities/dbHandler.php");
 			$_SESSION['DB'] = new DbHandler;
+			$_SESSION['DB2'] = new DbHandler;
 			require_once "../modules/make_safe_dir.php";
-
 			// Create Page Details
 			$_SESSION['P_ID'] = 0;
 			$_SESSION['RAW_CONTENT'] = "unSet"; 
@@ -49,23 +48,35 @@ class Publisher{
 
 
 		function getRaw($rawP_id){
-			$this->c3Log("getRaw()...");
+			//$this->c3Log("getRaw()...");
 			$_SESSION['P_ID']  = $rawP_id;
-			$this->c3Log("Publishing page ID: ".$_SESSION['P_ID']);
-			$results = $_SESSION['DB']->query("SELECT p_id, name, title, content, url, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = ".$_SESSION['P_ID'].";");
+			//$this->c3Log("Publishing page ID: ".$_SESSION['P_ID']);
+			$results = $_SESSION['DB']->query("SELECT p_id, b_id, name, title, content, url, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = ".$_SESSION['P_ID'].";");
 			$row = $results->fetch_array(MYSQLI_ASSOC);
+			$b_id = htmlspecialchars($row['b_id']);
+			echo "<script>console.log('b_id: $b_id.');</script>";
+			
 			$_SESSION['NAME'] =  strtolower(htmlspecialchars($row['name']));
-					
-				$_SESSION['BOOK'] = "test_group"; // This should be pulled from the DB. 
-				$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['BOOK']."/".$_SESSION['NAME']."/";
-				$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
-				$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
-				
-				
 			$_SESSION['TITLE'] = htmlspecialchars($row['title']);
 			$_SESSION['RAW_CONTENT'] = htmlspecialchars($row['content']);
 			$_SESSION['URL'] = htmlspecialchars($row['url']);
-			$_SESSION['UPDATED'] = htmlspecialchars($row['updated']);		
+			$_SESSION['UPDATED'] = htmlspecialchars($row['updated']);
+			
+			
+			$db2 = new DbHandler;
+			$bookInfo = $db2->query("SELECT name FROM books WHERE b_id = $b_id;");
+			$bookRow = $bookInfo->fetch_array(MYSQLI_ASSOC);
+			$_SESSION['BOOK'] = htmlspecialchars($bookRow['name']); 	// This should be pulled from the DB. 
+			echo "<script>console.log('Book Name: ".$_SESSION['BOOK'].".');</script>";
+			
+			
+			
+			
+			$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['BOOK']."/".$_SESSION['NAME']."/";
+			$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
+			$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
+				
+						
 			
 			
 			}

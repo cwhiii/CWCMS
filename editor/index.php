@@ -53,11 +53,16 @@
                 }
         return false;
         }
+	
+	function determineBook(){
+		return "1";	 // b_id 0 is hard coded as Book: General.
+		}
 
 	function save(){
 		echo "Saving.";
 		// Pull the values from the form.
 		$inID = trim($_POST['id']); 
+		$inBook = determineBook();
 		
 		// Validate ID.
 		if (validateID($inID)){
@@ -65,6 +70,7 @@
 				. "p_id = '$inID', "
 				. "name = '".trim($_POST['name'])."', "
 				. "title = '".trim($_POST['title'])."', "
+				. "b_id = '".determineBook()."', "
 				. "content = '".addslashes(trim($_POST['content']))."', "
 				. "updated = CURRENT_TIMESTAMP "
 				. "WHERE p_id = $inID;"
@@ -313,8 +319,8 @@
 				<legend>Page Info</legend>
 				<div>
 					<label for="title" title="A group or collection.">Book:</label> 
-					<div class='labeled' >
-						<select id="isBook" onChange="toggleBooks();" >
+					<div class='labeled' > 
+						<?php echo " <select id='isBook' onChange='toggleBooks();'  value='".$_SESSION['loadBook']."'>"; ?>
 							<option type="radio" name="standalone" value="standalone">Standalone</option>
 							<option type="radio" name="collection" value="collection">Collection</option>
 							<option type="radio" name="series" value="series">Series</option>
@@ -336,7 +342,7 @@
 					</div>
 					<br>
 					<label for="title">Title:</label>       <?php echo "<input class='labeled' type= 'text' name='title' id='title' size='25' value=".$_SESSION['loadTitle'].">  "; ?><br>
-					<label for="name" title='WARNING: Changing this can break existing links!'>Name:</label>         <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:orange;'>  "; ?><br>
+					<label for="name" title='WARNING: Changing this can break existing links!'>Name:</label> <?php echo "<input class='labeled' type= 'text' name='name' id='name' size='25' onKeyPress='hasChanged();' value=".$_SESSION['loadName']." style='color:orange;'>  "; ?><br>
 					<label for="template">Template:</label> <input class='labeled' type="text" name="tempalte" value="default" style="color:grey;" readonly><br>
 					<label for="location">Location </label> <input class='labeled' type="text" value="/some/url/is/specified/"  style="color:grey;"><br>
 					<label for="id">ID:</label>             <?php echo "<input class='labeled' type='text' name='id' size='3' value='" . $_SESSION['loadID'] . "' readonly style='color:grey;'><br>"; ?> 
