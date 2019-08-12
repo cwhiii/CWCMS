@@ -10,12 +10,10 @@
     $_SESSION['Path'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
     $_SESSION['webPath'] = "/playground/CWCMS";
 	require_once ($_SESSION['Path']."utilities/dbHandler.php");
-  
 	$_SESSION['loadName'] = "unset";
 	$_SESSION['loadB_id'] = "-1";
 	$_SESSION['parentID'] = "unset";
 	$_SESSION['parentName'] = "unknown";
-	
 	$_SESSION['aBook'] = new Book;
 		
 if($_SERVER['REQUEST_METHOD'] == "POST"){
@@ -35,14 +33,29 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 		}    
 	}        
 
-	function c3Log($text) {
-		echo "<script>console.log('$text');</script>";
-		}
-		
-	function go(){	
-		$_SESSION['aBook']->getAllBooks();
-		}
-    
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+	// Save content from the form to the database.
+	if($_POST['new']){
+		c3Log("Creating New Book.");
+		$tmpQ = ""
+			."INSERT INTO books (b_id, name, parentID, created, updated)"
+			."VALUES (NULL, '[NEW]', NULL, CURDATE(), CURDATE())"
+			;
+		c3Log($tmpQ);
+		$_SESSION['aBook']->db->query($tmpQ);
+		}    
+	}        
+
+
+
+function c3Log($text) {
+	echo "<script>console.log('$text');</script>";
+	}
+	
+function go(){	
+	$_SESSION['aBook']->getAllBooks();
+	}
+
 
 class Book {	
 	public $b_id;
@@ -196,7 +209,7 @@ class Book {
 				<fieldset class="collapsible">
 				<legend>Actions</legend>
 					<input type='submit' value='Save' name="save" > <br>
-					<button style="width:3.5em" title="Create New Book">New</button> <br>
+					<input type = "submit" name="new" value="New" style="width:3.5em" title="Create New Book"><br>
 					<div class="deleteBoxInactive" id="deleteBox" title="DELETE THIS BOOK">
 						<input name="confirmDelete" id="confirmDelete" title="CONFIRM DELETE" type="checkbox">
 						<button name="delete" id="deleteButton" title="DELETE" disabled>Delete</button>

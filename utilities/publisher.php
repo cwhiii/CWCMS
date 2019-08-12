@@ -62,23 +62,15 @@ class Publisher{
 			$_SESSION['URL'] = htmlspecialchars($row['url']);
 			$_SESSION['UPDATED'] = htmlspecialchars($row['updated']);
 			
-			
 			$db2 = new DbHandler;
 			$bookInfo = $db2->query("SELECT name FROM books WHERE b_id = $b_id;");
 			$bookRow = $bookInfo->fetch_array(MYSQLI_ASSOC);
 			$_SESSION['BOOK'] = htmlspecialchars($bookRow['name']); 	// This should be pulled from the DB. 
 			echo "<script>console.log('Book Name: ".$_SESSION['BOOK'].".');</script>";
-			
-			
-			
-			
+		
 			$_SESSION['FULLPATH'] = $_SERVER['PATH']."root/content/".$_SESSION['BOOK']."/".$_SESSION['NAME']."/";
 			$_SESSION['FINAL_PAGE_URL'] = $_SESSION['FULLPATH'] . "index.php";
 			$_SESSION['FINAL_ASCIIDOC_URL'] = $_SESSION['FULLPATH'] .  "/ascii.adoc";
-				
-						
-			
-			
 			}
 			
 		function echoAll(){
@@ -106,7 +98,6 @@ class Publisher{
 		function buildPage(){
 			safeMkDir($_SESSION['FULLPATH']);	
 			$asciiDocConfigs = "\n:imagesdir: ../images/ \n"; // This will need to be enhanced when there are sub books. 
-					
 			$cookedContent = "";
 			$cookedContent .= "<html>\n<head>\n";
 			$cookedContent .= "<title>".$_SESSION['TITLE']."</title>\n";
