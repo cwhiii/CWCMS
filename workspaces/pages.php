@@ -10,6 +10,7 @@
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
     $PATH = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
     require_once ($PATH."utilities/dbHandler.php");
+	$_SESSION['webPath'] = "/playground/CWCMS";
 	//NEEDED FOR PUBLISHING:
 	require_once ($PATH."utilities/publisher.php");
 	//c3Log($PATH."utilities/publisher.php");
@@ -128,22 +129,20 @@
 <html>
 <head>
     <title> CWCMS Page Editor </title>
-    <script  async type="text/javascript" src="/scripting/jquery/jquery.min.js"></script>
+    <?php echo"<script type='text/javascript' src='".$_SESSION['webPath']."/utilities/jquery.min.js'></script>\n"; ?>
     <link rel="stylesheet" type="text/css" href="/playground/CWCMS/css/cwcms.css">
     <link href='https://fonts.googleapis.com/css?family=Cinzel:400,700,900' rel='stylesheet' type='text/css'> 
     <link href='https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,700,900' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Domine:400,700' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" type="text/css" href="../css/workspaces.css">
+	<link rel="stylesheet" type="text/css" href="/playground/CWCMS/css/workspaces.css">
 	<LINK REL="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
     <meta charset="utf-8"> 
     <script>
         <!-- Prevents undesired loss of data due to unsaved changes. -->
         $changed = false;        
-        
 		function hasChanged(){
             $changed = true;
             }
-			
         function confirmDiscardLoad(){
             if($changed){
                 return confirm('Warning! There are unsaved changes. \n\nDiscard changes & load anyway?');
@@ -152,7 +151,6 @@
                 document.getElementById("form_load").submit();
                 }
             }
-			
         function confirmDiscardNew(){
             if($changed){
                 return confirm('Warning! There are unsaved changes. \n\nDiscard changes & create new Page?');
@@ -165,7 +163,29 @@
         function cancel(){
             document.getElementById("discardDialog").close();
             }
-    </script>       
+    </script>
+	<script>
+		// Delete Confirmation Toggle.
+		console.log(jQuery.fn.jquery);
+		$(document).ready(function(){
+			$('input[type="checkbox"]').click(function(){
+				if($(this).is(":checked")){
+					console.log("Activating delete.");
+					$("#deleteButton").prop("disabled", false); 
+					$("#deleteBox").removeClass("deleteBoxInactive");
+					$("#deleteBox").addClass("deleteBoxActive");
+					
+					}
+				else if($(this).is(":not(:checked)")){
+					console.log("Deactivating delete.");
+					$("#deleteButton").prop("disabled", true); 
+					$("#deleteBox").removeClass("deleteBoxActive");
+					$("#deleteBox").addClass("deleteBoxInactive");
+					}
+				});				    	
+			});
+	</script>
+	
 </head>
 <body>
 	<header class="leftBox">
@@ -187,15 +207,14 @@
 					<input type='submit' value='Save Draft' name="save" >
 					<input type='submit' value='Publish' name="publish" > 
 					<hr>
-					<div class="confirmBox" title="DISCARD EDITS">
+					<div class="deleteBoxInactive" title="DISCARD EDITS">
 						<input  name="confirmDelete" title="CONFIRM REFRESH" type="checkbox">
 						<button name="delete" title="DISCARD EDITS, and reload previously saved draft.">Reset</button>
 					</div> 
-					<div class="confirmBox" id="delete" title="DELETE THIS PAGE">
-						<input name="confirmDelete" title="CONFIRM DELETE" type="checkbox">
-						<button name="delete" title="DELETE">Delete</button>
+					<div class="deleteBoxInactive" id="deleteBox" title="DELETE THIS PAGE">
+						<input name="confirmDelete" id="confirmDelete" title="CONFIRM DELETE" type="checkbox">
+						<button name="delete" id="deleteButton" title="DELETE" disabled>Delete</button>
 					</div>
-				
 			</fieldset>
 
 			<fieldset class="collapsible">	

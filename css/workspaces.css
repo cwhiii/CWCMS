@@ -21,7 +21,7 @@ header {
   background: none;
   display: table; }
 
-.workspace {
+.workspace, .bookWorkspace {
   position: absolute;
   top: 0px;
   left: 18vw;
@@ -30,10 +30,21 @@ header {
   padding: 1em;
   background: ivory; }
 
+.bookWorkspace {
+  background: none;
+  white-space: nowrap; }
+
 label {
-  width: 30%;
   float: left;
+  width: 30%;
   text-align: right; }
+
+.bookLabel {
+  float: left;
+  clear: left;
+  text-align: left;
+  width: 10em;
+  font-weight: bold; }
 
 .labeled {
   width: 65%;
@@ -43,16 +54,30 @@ label {
 .leftButton {
   width: auto; }
 
-.confirmBox {
-  background: grey;
+.confirmBox, .confirmedBox {
+  background: none;
   display: inline-block;
   margin: auto;
   text-align: center; }
+
+.confirmedBox {
+  background: red; }
 
 .leftBox {
   width: 15vw;
   float: left;
   /*background:red;*/ }
+
+.deleteBoxInactive {
+  background: none;
+  display: inline-block;
+  margin: auto;
+  text-align: center;
+  background: none; }
+
+.deleteBoxActive {
+  @extent .deleteBoxInactive;
+  background: orange; }
 
 table {
   background: ivory;
@@ -69,7 +94,8 @@ tr:nth-child(odd) {
 
 tr:hover {
   background-color: #4eb393;
-  font-weight: bold; }
+  font-weight: bold;
+  cursor: pointer; }
 
 th, td {
   text-align: left;

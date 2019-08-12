@@ -7,7 +7,7 @@
         body {
             padding:0;
             margin:0;
-            background:radial-gradient(circle at bottom left, rgba(78,179,147,1), rgba(49,125,157,1));
+            background: radial-gradient(circle at bottom left, rgba(78,179,147,1), rgba(49,125,157,1));
             }
         form {
 			padding:0;
@@ -29,14 +29,26 @@
             left: 18vw;
 			width:82vw;
 			height: 99vh;
-			
 			padding: 1em;
             background:ivory;			
 			}
+        .bookWorkspace {
+			@extend .workspace;
+			background:none;
+			white-space:nowrap; 
+			}			
         label{
-            width: 30%;
             float: left;
-            text-align: right;
+            width: 30%;
+			text-align: right;
+            }      
+        .bookLabel{
+            float: left;
+            clear:left;
+			text-align: left;
+            width:10em;
+			//background:orange;
+			font-weight:bold;
             }      
         .labeled{
             width: 65%;
@@ -48,17 +60,34 @@
             width: auto;
             }     
         .confirmBox {
-            background:grey;
+            background:none;
             display:inline-block;
             margin: auto;
             text-align: center;            
             }
+        .confirmedBox {
+			@extend .confirmBox; 
+            background:red;
+            }
 		.leftBox{
-			width:15vw; 
+			width:15vw;  
 			float:left;
 			/*background:red;*/
 			}
-			
+			 
+			 
+		.deleteBoxInactive{
+			background:none;
+            display:inline-block;
+            margin: auto;
+            text-align: center; 
+			background:none; 
+			}
+		.deleteBoxActive{
+			@extent .deleteBoxInactive;
+			background:orange;
+			}
+		
 		table{
 			background:ivory;
 			border:none;
@@ -76,7 +105,8 @@
 		tr:hover {
 			background-color: rgba(78,179,147,1);
 			font-weight:bold;
-			}	
+			cursor:pointer;
+			} 
 
 		th, td {
 			text-align: left;
