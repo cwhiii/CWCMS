@@ -218,7 +218,7 @@ class Book {
 	<body>
 		<header class="leftBox">
 			<h1>
-				<img src="pen.png" class="headerIcon">
+				<?php echo "<img src='".$_SESSION['webPath']."/resources/pen.png' class='headerIcon'>"; ?>
 				CWCMS  <br> 
 				Books <br>
 				Workspace

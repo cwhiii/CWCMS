@@ -190,8 +190,9 @@
 <body>
 	<header class="leftBox">
 		<h1>
-			<img src="pen.png" class="headerIcon">
-			CWCMS  <br> Page Editor
+			<?php echo "<img src='".$_SESSION['webPath']."/resources/pen.png' class='headerIcon'>"; ?>
+			CWCMS  <br> 
+			Page Editor
 		</h1>
 		<h3><i>Some Page Title</i></h3>
 	</header>
