@@ -3,8 +3,8 @@
      *      www.cwholemaniii.com
      *      codeMonkey@cwholemaniii.com
      *
-     *      Created:        2 March  2019. 	
-     *      Modified:       9 August 2019.
+     *      Created:    2 March  2019. 	
+     *      Modified:	12 August 2019.
      */
 
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
@@ -60,7 +60,7 @@
 	// b_id 1 is hard-coded as Book "General."
 
 	function save(){
-		echo "Saving.";
+		echo "<script>console.log('Saving.');</script>";
 		// Pull the values from the form.
 		$inID = trim($_POST['id']); 
 		//$inBook = determineBook();

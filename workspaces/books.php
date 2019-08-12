@@ -3,6 +3,8 @@
 	For managing Books and Sub-Volumes.
 	A portion of CWCMS. 
 	www.cwholemaniii.com
+    Created:    10 August 2019. 	
+    Modified:	12 August 2019.
 */
     $tmp = fopen("error_log", 'w') or die("Failed to open error log.");
     $_SESSION['Path'] = $_SERVER['DOCUMENT_ROOT'] . "/playground/CWCMS/";
@@ -13,60 +15,32 @@
 	$_SESSION['loadB_id'] = "-1";
 	$_SESSION['parentID'] = "unset";
 	$_SESSION['parentName'] = "unknown";
-
+	
+	$_SESSION['aBook'] = new Book;
+		
 if($_SERVER['REQUEST_METHOD'] == "POST"){
-        // Save content from the form to the database.
-        /*if($_POST['save']){
-			//save();
+	// Save content from the form to the database.
+	if($_POST['save']){
+		c3Log("Saving Book: [".trim($_POST['b_id'])."].");
+		$tmpQ = "UPDATE books SET "
+			. "name = \"".trim($_POST['name'])."\" ";
+		if(!empty(trim($_POST['parentID'])) ){
+			$tmpQ .= ", parentID = \""	.trim($_POST['parentID']).	"\" ";
 			}
-			*/
-        // Load the specified data from the database into the form. 
-        //elseif($_POST['load']){
-		if($_POST['load']){
-            loadBook(trim($_POST['b_id']));
-            }
+		$tmpQ .= "WHERE b_id = ".trim($_POST['b_id']).";"
+			;
+		c3Log($tmpQ);
+		$_SESSION['aBook']->db->query($tmpQ);
+		//go();
+		}    
 	}        
-
-/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------HERE---------------
-
-function loadPage($aPage){
-        // Validate ID.
-		//echo "<div style='background:tan;'><p style='font-size:2em;'>Attempting to load: '$aPage'.</p></div>";
-        if (validateID($aPage)){
-            $results = $_SESSION['DB']->query("SELECT p_id, b_id, name, title, content, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM pages WHERE p_id = $aPage;");
-            $row = $results->fetch_array(MYSQLI_ASSOC);
-            $_SESSION['loadID'] =  htmlspecialchars($row['p_id']);
-            $_SESSION['loadName'] =  htmlspecialchars($row['name']);
-			$_SESSION['loadTitle'] = htmlspecialchars($row['title']); 
-			//echo $_SESSION['loadTitle'];
-            $_SESSION['loadContent'] =  htmlspecialchars($row['content']);
-            $_SESSION['updated'] =  htmlspecialchars($row['updated']);
-            
-			$_SESSION['loadBook'] =  htmlspecialchars($row['b_id']);
-			}    
-        else {
-            echo "<div style='background:red;'><p style='font-size:2em;'>Could not load: Attempting to load invalid Page ID: '$aPage'.</p></div>";
-            }           
-        }
- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------HERE---------------
-*/
-	function loadBook($b_id){
-		c3Log("Loading Book: $b_id");
-		echo "<script>alert($b_id);</script>";
-		$_SESSION['loadName'] = "unset";
-		$_SESSION['loadB_id'] = "-1";
-		$_SESSION['parentID'] = "unset";
-		$_SESSION['parentName'] = "unknown";
-		}
 
 	function c3Log($text) {
 		echo "<script>console.log('$text');</script>";
 		}
 		
 	function go(){	
-		$aBook = new Book;
-		$aBook->getBookByID(5);
-		$aBook->getAllBooks();
+		$_SESSION['aBook']->getAllBooks();
 		}
     
 
@@ -75,8 +49,6 @@ class Book {
 	public $name;
 	public $parentID;
 	public $isSubVolume;
-	public $ping;
-	public $pong;
 	public $db;
 	public $allBooks;
 	
@@ -88,7 +60,9 @@ class Book {
 		$this->db = new DbHandler;	
 		}
  
- 
+		
+		
+		
 	function getBookByID($b_id) {
 		c3Log("--------------------------------------------------------------------------------");
 		c3Log("getBookByID()");
@@ -121,11 +95,11 @@ class Book {
 		c3Log("getAllBooks()");
 		
 		//$results = $this->db->query("SELECT b_id, name, parentID, DATE_FORMAT(created, '%Y-%m-%d @ %H:%i') as created, DATE_FORMAT(updated, '%Y-%m-%d @ %H:%i') AS 'updated'  FROM books;");
-		$q  = ""
+		$tmpQ  = ""
 			."SELECT a.b_id, a.name, b.name, a.parentID "
 			."FROM books a "
 			."LEFT OUTER JOIN books b ON(a.parentID = b.b_id); ";
-		$results = $this->db->query($q);
+		$results = $this->db->query($tmpQ);
 		$cols = ["ID","Name","Parent Name", "Parent ID"];		
 		$this->allBooks = array(
 			array("","",""),
@@ -177,16 +151,15 @@ class Book {
 		<link rel="SHORTCUT ICON" HREF="/images/parts/favicon.ico" />
 		<meta charset="utf-8"> 
 		<script>
-			// All "onLoad things"
-			console.log(jQuery.fn.jquery);
+			// All "onLoad things."
 			$(document).ready(function(){
+				// Toggling of protection on Delete button.
 				$('input[type="checkbox"]').click(function(){
 					if($(this).is(":checked")){
 						console.log("Activating delete.");
 						$("#deleteButton").prop("disabled", false); 
 						$("#deleteBox").removeClass("deleteBoxInactive");
-						$("#deleteBox").addClass("deleteBoxActive");
-						
+						$("#deleteBox").addClass("deleteBoxActive");		
 						}
 					else if($(this).is(":not(:checked)")){
 						console.log("Deactivating delete.");
@@ -196,20 +169,14 @@ class Book {
 						}
 					});
 				    	
-				
-				//	To determine which row is clicked on, and therefore to determine which Book to then subsequently load. 
+				//	Determine which row is clicked on, and then load the appropriate Book for editing. 
 				$("#bookList td").click(function() {     
 					$("#name").val($('td:eq(1)', $(this).parents('tr')).text());
 					$("#b_id").val($('td:first', $(this).parents('tr')).text());   
 					$("#parentName").val($('td:eq(2)', $(this).parents('tr')).text());
 					$("#parentID").val($('td:eq(3)', $(this).parents('tr')).text());
 					});
-				
-				
-				});
-				
-				
-				
+			});
 		</script>
 		
 		
@@ -229,7 +196,7 @@ class Book {
 				<fieldset class="collapsible">
 				<legend>Actions</legend>
 					<input type='submit' value='Save' name="save" > <br>
-					<button style="width:3.5em" title="Create New Book" onClick="console.log('This should really do something... ')">New</button> <br>
+					<button style="width:3.5em" title="Create New Book">New</button> <br>
 					<div class="deleteBoxInactive" id="deleteBox" title="DELETE THIS BOOK">
 						<input name="confirmDelete" id="confirmDelete" title="CONFIRM DELETE" type="checkbox">
 						<button name="delete" id="deleteButton" title="DELETE" disabled>Delete</button>
@@ -243,16 +210,16 @@ class Book {
 					<legend>Book Info</legend>
 					<div style="overflow:auto; float:left; clear:left; width:30%;">
 						<label class="bookLabel" for="name" title='WARNING: Changing this can break existing links!'>Name:</label> 
-						<input class='labeled' type= 'text' name='name' id='name' size='25' value='-'><br>
+						<input class='labeled' type= 'text' name='name' id='name' size='25' ><br>
 						
-						<label class="bookLabel" for="id">ID:</label>  
-						<input class='labeled' type='text' name='id' id='b_id' size='3' value='-' style='color:grey;' readonly><br>
+						<label class="bookLabel" for="b_id">ID:</label>  
+						<input class='labeled' type='text' name='b_id' id='b_id' size='3' style='color:grey;' readonly><br>
 						
 						<label class="bookLabel" for="parentName">Parent Name</label> 
-						<input class='labeled' type="text" value="-"  id="parentName"><br>
+						<input class='labeled' type="text" id="parentName"><br>
 						
 						<label class="bookLabel" for="parentID">Parent ID</label> 
-						<input class='labeled' type="text" value="-" id="parentID"><br>
+						<input class='labeled' type="text" name="parentID" id="parentID"><br>
 					</div>
 					<!-- POPULATE THE BOOKS TABLE-->
 					<?php go(); ?> 
